@@ -1,0 +1,54 @@
+NAME
+    Email::Sender::Server - Eventual Email Delivery System
+
+VERSION
+    version 0.01_01
+
+SYNOPSIS
+        $ ess setup system
+
+    then ...
+
+        $ nohup ess queue process &
+
+    then ...
+
+        package main;
+    
+        my $ess_dbpath = "...";
+    
+        my $mailer  = Email::Sender::Server::Client->new(storage => $ess_dbpath);
+    
+        my @message = (to => '...', subject => '...', body => '...');
+    
+        # non-blocking email sending
+    
+        unless ($mailer->message(@message)) {
+        
+            print $mailer->errors_to_string;
+        
+        }
+
+DESCRIPTION
+    Email::Sender::Server is designed to provide a simple client API for
+    sending emails from your applications. It accomplishes this by
+    separating the email creation and delivery events, thus email delivery
+    becomes eventual in-that email messages are not required to be delivered
+    immediately.
+
+    ESS is an acronym for the Email::Sender::Server system and refers to the
+    entire system and not a specific component within the system. ESS is an
+    EDS (eventual email delivery system) which means email messages are not
+    usually delivered immediately.
+
+    More documentation to come ...
+
+AUTHOR
+    Al Newkirk <awncorp@cpan.org>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2012 by awncorp.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
