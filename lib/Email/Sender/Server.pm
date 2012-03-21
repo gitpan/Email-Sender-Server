@@ -2,155 +2,36 @@
 
 package Email::Sender::Server;
 {
-    $Email::Sender::Server::VERSION = '0.01_01';
+    $Email::Sender::Server::VERSION = '0.10';
 }
 
 use strict;
 use warnings;
 
-our $VERSION = '0.01_01';    # VERSION
+use Validation::Class;
 
+use Email::Sender::Server::Controller;
 
-#use Email::Sender::Server;
-#
-#my ($cmd, $rtn) = Email::Sender::Server->run('worker', 'run');
-#
-#if (ref $cmd) {
-#
-#    # ...
-#
-#}
+our $VERSION = '0.10';    # VERSION
+
 
 sub run {
 
-    my $class = shift;
+    my $self      = shift;
+    my @arguments = @ARGV;
 
-    my @args = @ARGV;
+    @arguments = @_ unless @arguments;
 
-    @args = @_ unless @args;
+    my $command = shift @arguments;
 
-    my $args = [];
-    my $opts = {};
-    my $cmds = $class->commands;
+    $command ||= 'help';
 
-    my $goto = shift @args;
+    my $controller = Email::Sender::Server::Controller->new(
+        command   => $command,
+        arguments => [@arguments]
+    );
 
-    if ($goto) {
-
-        if (defined $cmds->{$goto}) {
-
-            my $class = $cmds->{$goto};
-
-            require $class->{path} unless $INC{$class->{used}};
-
-            my $package = $class->{name};
-
-            my $command = $package->new(commands => $cmds);
-
-            my $results = $command->run(@args) || '';
-
-            return ($command, $results);
-
-        }
-
-        if ($goto eq 'help') {
-
-            my $cmd = shift @args;
-
-            if ($cmd) {
-
-                if (defined $cmds->{$cmd}) {
-
-                    my $class = $cmds->{$cmd};
-
-                    require $class->{path} unless $INC{$class->{used}};
-
-                    my $package = $class->{name};
-
-                    my $command = $package->new(commands => $cmds);
-
-                    return ($command, $command->usage())
-                      if $command->can("usage");
-
-                }
-
-            }
-
-        }
-
-    }
-
-    print <<"DEFAULT";
-usage: $0 COMMAND [ARGS]
-
-The currently installed commands are:
-   
-DEFAULT
-
-    my @cmd_names = keys %{$cmds};
-
-    my @ordered_cmds = sort { $a cmp $b } @cmd_names;
-
-    my ($max_chars) =
-      length((sort { length($b) <=> length($a) } @cmd_names)[0]);
-
-    foreach my $name (@ordered_cmds) {
-
-        my $class = $cmds->{$name};
-
-        require $class->{path} unless $INC{$class->{used}};
-
-        my $package = $class->{name};
-
-        my $desc =
-          (defined &{"$package\::abstract"})
-          ? $package->abstract()
-          : 'This command has no description';
-
-        print "\t$name" . (" " x ($max_chars - length($name))) . "\t $desc\n";
-
-    }
-
-    print <<"DEFAULT";
-
-See '$0 help COMMAND' for more information on a specific command.
-DEFAULT
-
-}
-
-sub commands {
-
-    my $class = ref $_[0] || $_[0];
-
-    my $cmds = {};
-
-    my $cmds_dir = $class;
-    $cmds_dir =~ s/::/\//g;
-    $cmds_dir .= "/Command";
-
-    foreach my $location (@INC) {
-
-        my $path = "$location/$cmds_dir";
-
-        foreach my $module (glob "$path/*.pm") {
-
-            my ($command) = $module =~ /$path\/([a-zA-Z0-9]+)\.pm$/;
-
-            unless (defined $cmds->{$command}) {
-
-                $cmds->{$command} = {
-                    path => $module,
-                    name => "$class\::Command\::$command",
-                    used => "$cmds_dir/$command.pm"
-                };
-
-            }
-
-        }
-
-    }
-
-    return $cmds;
+    $controller->execute_command;
 
 }
 
@@ -165,29 +46,25 @@ Email::Sender::Server - Eventual Email Delivery System
 
 =head1 VERSION
 
-version 0.01_01
+version 0.10
 
 =head1 SYNOPSIS
 
-    $ ess setup system
+    $ ess help
 
 then ...
 
-    $ nohup ess queue process &
+    $ ess start
 
 then ...
 
     package main;
     
-    my $ess_dbpath = "...";
+    # eventual emailer
     
-    my $mailer  = Email::Sender::Server::Client->new(storage => $ess_dbpath);
+    my $mailer  = Email::Sender::Server::Client->new;
     
-    my @message = (to => '...', subject => '...', body => '...');
-    
-    # non-blocking email sending
-    
-    unless ($mailer->message(@message)) {
+    unless ($mailer->send(to => '...', subject => '...', body => '...')) {
         
         print $mailer->errors_to_string;
         
@@ -200,12 +77,8 @@ emails from your applications. It accomplishes this by separating the email
 creation and delivery events, thus email delivery becomes eventual in-that email
 messages are not required to be delivered immediately.
 
-ESS is an acronym for the Email::Sender::Server system and refers to the entire
-system and not a specific component within the system. ESS is an EDS (eventual
-email delivery system) which means email messages are not usually delivered
-immediately.
-
-More documentation to come ...
+This is very much a work in-progress, more documentation soon to come, see
+L<Email::Sender::Server> for common usage exmaples.
 
 =head1 AUTHOR
 

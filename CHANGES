@@ -1,4 +1,10 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.10 (2012-03-15)
+    * first official release (no POD, no tests)
+
+0.01_02 (2012-03-15)
+    * trim the fat (no moose, no dbic, etc)
+
 0.01_01 (2012-03-14)
-    - commence brain dump
+    * commence brain dump

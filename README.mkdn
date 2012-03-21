@@ -4,34 +4,28 @@ Email::Sender::Server - Eventual Email Delivery System
 
 # VERSION
 
-version 0.01_01
+version 0.10
 
 # SYNOPSIS
 
-    $ ess setup system
+    $ ess help
 
 then ...
 
-    $ nohup ess queue process &
+    $ ess start
 
 then ...
 
     package main;
     
 
-    my $ess_dbpath = "...";
+    # eventual emailer
     
 
-    my $mailer  = Email::Sender::Server::Client->new(storage => $ess_dbpath);
+    my $mailer  = Email::Sender::Server::Client->new;
     
 
-    my @message = (to => '...', subject => '...', body => '...');
-    
-
-    # non-blocking email sending
-    
-
-    unless ($mailer->message(@message)) {
+    unless ($mailer->send(to => '...', subject => '...', body => '...')) {
         
 
         print $mailer->errors_to_string;
@@ -46,12 +40,8 @@ emails from your applications. It accomplishes this by separating the email
 creation and delivery events, thus email delivery becomes eventual in-that email
 messages are not required to be delivered immediately.
 
-ESS is an acronym for the Email::Sender::Server system and refers to the entire
-system and not a specific component within the system. ESS is an EDS (eventual
-email delivery system) which means email messages are not usually delivered
-immediately.
-
-More documentation to come ...
+This is very much a work in-progress, more documentation soon to come, see
+[Email::Sender::Server](http://search.cpan.org/perldoc?Email::Sender::Server) for common usage exmaples.
 
 # AUTHOR
 

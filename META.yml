@@ -5,7 +5,6 @@ author:
 build_requires: {}
 configure_requires:
   ExtUtils::MakeMaker: 6.30
-  File::ShareDir::Install: 0.03
 dynamic_config: 0
 generated_by: 'Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640'
 license: perl
@@ -14,23 +13,20 @@ meta-spec:
   version: 1.4
 name: Email-Sender-Server
 requires:
-  DBIx::Class: 0
-  Data::Validate::Email: 0
-  DateTime: 0
+  Class::Date: 0
+  Data::Dumper: 0
+  Data::Validate::Email: 0.04
   Email::MIME: 0
   Email::Sender: 0
   File::Basename: 0
   File::Copy: 0
-  File::ShareDir: 0
+  File::Path: 0
   File::Spec: 0
   File::Type: 0
-  Getopt::Long: 0
-  Hash::Merge: 0
   IO::All: 0
-  Try::Tiny: 0
-  Validation::Class: 5.63
+  Validation::Class: 5.80
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Email-Sender-Server
   homepage: http://ana.io/
   repository: http://github.com/alnewkirk/Email-Sender-Server.git
-version: 0.01_01
+version: 0.10

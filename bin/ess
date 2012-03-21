@@ -4,16 +4,17 @@
 # ABSTRACT: Email Sender Server CLI
 
 BEGIN {
+
     use FindBin;
     use lib $FindBin::Bin . "/../lib";
-    use lib '/home/alnewkirk/Repos/alnewkirk/Validation-Class/lib';
+
 }
 
 use strict;
 use warnings;
 
-use File::Basename 'dirname';
 use File::Spec;
+use File::Basename 'dirname';
 
 use lib join '/', File::Spec->splitdir(dirname(__FILE__)), 'lib';
 use lib join '/', File::Spec->splitdir(dirname(__FILE__)), '..', 'lib';
@@ -22,36 +23,7 @@ use Email::Sender::Server;
 
 our $VERSION = $Email::Sender::Server::VERSION || '0.0.0';
 
-my  ($cmd, $rtn) = Email::Sender::Server->run; # start your engines
-
-if (ref $cmd) {
-    
-    if ($cmd->has_errors) {
-        
-        print "\n";
-        print "error(s) encountered:\n";
-        print join "\n", @{$cmd->{errors}};
-        print "\n";
-        
-    }
-    
-    if ($cmd->has_messages) {
-        
-        print "\n" if $cmd->has_errors;
-        print "\n";
-        print join "\n", @{$cmd->{messages}};
-        print "\n";
-        
-    }
-    
-    if ($rtn) {
-        
-        print "\n";
-        print $rtn unless ref $rtn;
-        
-    }
-    
-}
+Email::Sender::Server->run; # spit it out mickey-fickey
 
 __END__
 =pod
@@ -62,7 +34,7 @@ ess cli - Email Sender Server CLI
 
 =head1 VERSION
 
-version 0.01_01
+version 0.10
 
 =head1 AUTHOR
 

@@ -6,8 +6,6 @@ use warnings;
 
 use ExtUtils::MakeMaker 6.30;
 
-use File::ShareDir::Install;
-install_share dist => "share";
 
 
 my %WriteMakefileArgs = (
@@ -15,8 +13,7 @@ my %WriteMakefileArgs = (
   "AUTHOR" => "Al Newkirk <awncorp\@cpan.org>",
   "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => "6.30",
-    "File::ShareDir::Install" => "0.03"
+    "ExtUtils::MakeMaker" => "6.30"
   },
   "DISTNAME" => "Email-Sender-Server",
   "EXE_FILES" => [
@@ -25,23 +22,20 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "Email::Sender::Server",
   "PREREQ_PM" => {
-    "DBIx::Class" => 0,
-    "Data::Validate::Email" => 0,
-    "DateTime" => 0,
+    "Class::Date" => 0,
+    "Data::Dumper" => 0,
+    "Data::Validate::Email" => "0.04",
     "Email::MIME" => 0,
     "Email::Sender" => 0,
     "File::Basename" => 0,
     "File::Copy" => 0,
-    "File::ShareDir" => 0,
+    "File::Path" => 0,
     "File::Spec" => 0,
     "File::Type" => 0,
-    "Getopt::Long" => 0,
-    "Hash::Merge" => 0,
     "IO::All" => 0,
-    "Try::Tiny" => 0,
-    "Validation::Class" => "5.63"
+    "Validation::Class" => "5.80"
   },
-  "VERSION" => "0.01_01",
+  "VERSION" => "0.10",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -66,8 +60,5 @@ delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
 
 WriteMakefile(%WriteMakefileArgs);
 
-package
-MY;
-use File::ShareDir::Install qw(postamble);
 
 
