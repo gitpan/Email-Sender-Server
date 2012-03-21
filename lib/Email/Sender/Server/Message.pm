@@ -1,6 +1,6 @@
 package Email::Sender::Server::Message;
 {
-    $Email::Sender::Server::Message::VERSION = '0.12';
+    $Email::Sender::Server::Message::VERSION = '0.13';
 }
 
 use strict;
@@ -22,7 +22,7 @@ set {
 
 };
 
-our $VERSION = '0.12';    # VERSION
+our $VERSION = '0.13';    # VERSION
 
 mxn basic => {
 
@@ -383,8 +383,8 @@ sub send {
             encoding     => 'quoted-printable',
             format       => 'flowed'
         },
-        body_str => $mail->{message}->{text_body}
-      ) if $mail->{message}->{text_body};
+        body_str => $mail->{message}->{body_text}
+      ) if $mail->{message}->{body_text};
 
     push @parts,
       Email::MIME->create(
@@ -393,8 +393,8 @@ sub send {
             charset      => 'utf-8',
             encoding     => 'quoted-printable',
         },
-        body_str => $mail->{message}->{html_body}
-      ) if $mail->{message}->{html_body};
+        body_str => $mail->{message}->{body_html}
+      ) if $mail->{message}->{body_html};
 
     my $email = Email::MIME->create(
         header_str => [

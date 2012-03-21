@@ -1,6 +1,6 @@
 package Email::Sender::Server::Base;
 {
-    $Email::Sender::Server::Base::VERSION = '0.12';
+    $Email::Sender::Server::Base::VERSION = '0.13';
 }
 
 use strict;
