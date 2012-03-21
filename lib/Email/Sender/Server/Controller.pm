@@ -1,6 +1,6 @@
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.11';
+    $Email::Sender::Server::Controller::VERSION = '0.12';
 }
 
 use strict;
@@ -8,7 +8,7 @@ use warnings;
 
 use Validation::Class;
 
-our $VERSION = '0.11';    # VERSION
+our $VERSION = '0.12';    # VERSION
 
 has arguments => sub {
     [

@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.11';
+    $Email::Sender::Server::Manager::VERSION = '0.12';
 }
 
 use strict;
@@ -26,7 +26,7 @@ use Class::Date;
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.11';    # VERSION
+our $VERSION = '0.12';    # VERSION
 
 
 has spawn => 3;
@@ -112,7 +112,7 @@ sub create_work {
 
     while (my ($name, $value) = each(%input)) {
 
-        $messenger->param($name, $value);
+        $messenger->$name($value);
 
     }
 
@@ -297,7 +297,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =head1 SYNOPSIS
 

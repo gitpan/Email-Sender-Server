@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Client;
 {
-    $Email::Sender::Server::Client::VERSION = '0.11';
+    $Email::Sender::Server::Client::VERSION = '0.12';
 }
 
 use strict;
@@ -17,7 +17,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(mail);
 
-our $VERSION = '0.11';    # VERSION
+our $VERSION = '0.12';    # VERSION
 
 
 sub mail { __PACKAGE__->new->send(@_) }
@@ -51,7 +51,7 @@ Email::Sender::Server::Client - Email Delivery Agent
 
 =head1 VERSION
 
-version 0.11
+version 0.12
 
 =head1 SYNOPSIS
 
@@ -93,7 +93,7 @@ altering or using a non-sendmail transport ...
     
     my @message = (to => '...', subject => '...', body => '...');
     
-    $mail->transport({
+    push @message, 'transport' => {
     
         # key is the Email::Sender transport driver,
         # value is the transport driver's arguments
@@ -105,7 +105,7 @@ altering or using a non-sendmail transport ...
             
         }
     
-    });
+    };
     
     $mail->send(@message);
     
@@ -114,6 +114,9 @@ altering or using a non-sendmail transport ...
         print $mail->errors_to_string;
         
     }
+
+Please see the L<Email::Sender::Server::Message> class for attributes that can
+be used as arguments to the mail() and send() methods.
 
 Currently all ESS classes operate out of the current-working-directory which can
 be sub-optimal, especially when used in other classes that can be utilized by

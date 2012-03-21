@@ -1,6 +1,6 @@
 package Email::Sender::Server::Message;
 {
-    $Email::Sender::Server::Message::VERSION = '0.11';
+    $Email::Sender::Server::Message::VERSION = '0.12';
 }
 
 use strict;
@@ -22,7 +22,7 @@ set {
 
 };
 
-our $VERSION = '0.11';    # VERSION
+our $VERSION = '0.12';    # VERSION
 
 mxn basic => {
 
@@ -302,14 +302,14 @@ mth to_hash => {
         $mail->{message}->{reply_to} = $self->reply_to
           if $self->reply_to;
 
+        $mail->{message}->{body_html} = $self->body
+          if $self->body;
+
         $mail->{message}->{body_html} = $self->html
           if $self->html;
 
         $mail->{message}->{body_text} = $self->text
           if $self->text;
-
-        $mail->{message}->{body_html} = $self->body
-          if not $self->text || not $self->html;
 
         while (my ($class, $args) = each(%{$self->transport})) {
 
