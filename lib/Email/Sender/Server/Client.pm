@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Client;
 {
-    $Email::Sender::Server::Client::VERSION = '0.10';
+    $Email::Sender::Server::Client::VERSION = '0.11';
 }
 
 use strict;
@@ -17,7 +17,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(mail);
 
-our $VERSION = '0.10';    # VERSION
+our $VERSION = '0.11';    # VERSION
 
 
 sub mail { __PACKAGE__->new->send(@_) }
@@ -51,7 +51,7 @@ Email::Sender::Server::Client - Email Delivery Agent
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 

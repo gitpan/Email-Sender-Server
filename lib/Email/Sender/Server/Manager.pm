@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.10';
+    $Email::Sender::Server::Manager::VERSION = '0.11';
 }
 
 use strict;
@@ -26,7 +26,7 @@ use Class::Date;
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.10';    # VERSION
+our $VERSION = '0.11';    # VERSION
 
 
 has spawn => 3;
@@ -297,7 +297,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 

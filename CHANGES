@@ -1,5 +1,8 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.11 (2012-03-15)
+    * fixed big typo in Message.pm from_hash method
+
 0.10 (2012-03-15)
     * first official release (no POD, no tests)
 

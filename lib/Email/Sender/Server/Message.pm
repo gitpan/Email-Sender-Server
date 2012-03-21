@@ -1,6 +1,6 @@
 package Email::Sender::Server::Message;
 {
-    $Email::Sender::Server::Message::VERSION = '0.10';
+    $Email::Sender::Server::Message::VERSION = '0.11';
 }
 
 use strict;
@@ -22,7 +22,7 @@ set {
 
 };
 
-our $VERSION = '0.10';    # VERSION
+our $VERSION = '0.11';    # VERSION
 
 mxn basic => {
 
@@ -234,13 +234,9 @@ sub from_hash {
 
     }
 
-    $self->params(
-
-        to      => $data->{message}->{to},
-        from    => $data->{message}->{from},
-        subject => $data->{message}->{subject}
-
-    );
+    $self->param(to      => $data->{message}->{to});
+    $self->param(from    => $data->{message}->{from});
+    $self->param(subject => $data->{message}->{subject});
 
     $self->param('cc' => $data->{message}->{cc})
       if $data->{message}->{cc};
@@ -274,7 +270,7 @@ sub from_hash {
     $self->param('tags' => $data->{tags})
       if $data->{tags};
 
-    return $self->is_valid;
+    return $self->validate_profile('is_valid');
 
 }
 

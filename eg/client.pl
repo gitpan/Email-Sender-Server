@@ -14,14 +14,14 @@ my @message = (
     html    => 'Suspendisse sit amet orci nec purus varius pharetra.'
 );
 
-my $result = mail @message;
+#my $result = mail @message;
 
-print $result, "\n";
+#print $result, "\n";
 
-#my $mailer = Email::Sender::Server::Client->new;
-#
-#shift @message for (1..2);
-#
-#print $mailer->send(@message), "\n";
-#
-#print $mailer->errors_to_string, "\n";
+my $mailer = Email::Sender::Server::Client->new(
+    path => '/tmp/mailer'
+);
+
+print $mailer->send(@message), "\n";
+
+# print $mailer->errors_to_string, "\n";
