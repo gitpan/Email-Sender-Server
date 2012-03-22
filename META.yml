@@ -24,9 +24,9 @@ requires:
   File::Spec: 0
   File::Type: 0
   IO::All: 0
-  Validation::Class: 5.80
+  Validation::Class: 5.82
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Email-Sender-Server
   homepage: http://ana.io/
   repository: http://github.com/alnewkirk/Email-Sender-Server.git
-version: 0.15
+version: 0.18

@@ -1,6 +1,6 @@
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.15';
+    $Email::Sender::Server::Controller::VERSION = '0.18';
 }
 
 use strict;
@@ -8,7 +8,7 @@ use warnings;
 
 use Validation::Class;
 
-our $VERSION = '0.15';    # VERSION
+our $VERSION = '0.18';    # VERSION
 
 has arguments => sub {
     [
@@ -26,21 +26,52 @@ has commands => sub {
         clean => {
 
             abstract => 'cleanup the file system',
-            routine  => \&_command_clean
+            routine  => \&_command_clean,
+            usage    => qq{
+            
+            command: clean
+            
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
 
         },
 
         config => {
 
             abstract => 'generate a config file',
-            routine  => \&_command_config
+            routine  => \&_command_config,
+            usage    => qq{
+            
+            command: config
+            
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
 
         },
 
         email => {
 
             abstract => 'send an email real quick',
-            routine  => \&_command_email
+            routine  => \&_command_email,
+            usage    => qq{
+            
+            command: email
+            
+            valid arguments are:
+               
+                ess email :text      reads text from stdin
+                ess email :html      reads text from stdin
+                
+                ess email text:"..." set email body text
+                ess email html:"..." set email body html
+                
+                ess email to:me\@abc.co from:you\@abc.co subject:test
+                
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
 
         },
 
@@ -55,7 +86,20 @@ has commands => sub {
         start => {
 
             abstract => 'start processing the email queue',
-            routine  => \&_command_start
+            routine  => \&_command_start,
+            usage    => qq{
+            
+            command: start
+            
+            valid arguments are:
+               
+                ess start :w         starts ess with 1 worker
+                ess start w:5        starts ess with 5 workers
+                ess start workers:1  starts ess with 1 worker
+                
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
 
         },
 
@@ -67,10 +111,31 @@ has commands => sub {
 
         },
 
+        status => {
+
+            abstract => 'display ess processing information',
+            routine  => \&_command_status,
+            usage    => qq{
+            
+            command: status
+            
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
+
+        },
+
         stop => {
 
             abstract => 'stop processing the email queue',
-            routine  => \&_command_stop
+            routine  => \&_command_stop,
+            usage    => qq{
+            
+            command: stop
+            
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
 
         },
 
@@ -107,13 +172,15 @@ mth execute_command => {
 
         my ($self, @args) = @_;
 
-        my $options = $self->parse_arguments;
+        my ($options, $sequence) = $self->parse_arguments;
 
         # execute the command
 
         my $command = $self->command;
 
-        my $output = $self->commands->{$command}->{routine}->($self, $options);
+        my @params = ($self, $options, $sequence);
+
+        my $output = $self->commands->{$command}->{routine}->(@params);
 
         unless ($output) {
 
@@ -143,7 +210,7 @@ sub parse_arguments {
 
     my $params = {};
 
-    # my $sequence = [];
+    my $sequence = [];
 
     for (my $i = 0; $i < @args; $i++) {
 
@@ -169,13 +236,13 @@ sub parse_arguments {
 
         else {
 
-            # push @{$sequence}, $arg;
+            push @{$sequence}, $arg;
 
         }
 
     }
 
-    return $params;
+    return $params, $sequence;
 
 }
 
@@ -257,37 +324,56 @@ sub _command_email {
 
 sub _command_help {
 
-    my ($self, $opts) = @_;
+    my ($self, $opts, $args) = @_;
 
     my $commands_string;
 
-    my @commands = keys %{$self->commands};
+    if ($args->[0]) {
 
-    my @ordered = sort { $a cmp $b } @commands;
+        my $command = $args->[0];
 
-    my ($max_chars) = length(
-        (
+        if ($self->commands->{$command}) {
 
-            sort   { length($b) <=> length($a) }
-              grep { not defined $self->commands->{$_}->{hidden} }
-              @commands
-
-        )[0]
-    );
-
-    foreach my $name (@ordered) {
-
-        if (defined $self->commands->{$name}->{hidden}) {
-
-            next;
+            $commands_string = $self->commands->{$command}->{usage}
+              if $self->commands->{$command}->{usage};
 
         }
 
-        my $desc = $self->commands->{$name}->{abstract}
-          || 'This Command has no Description';
+    }
 
-        $commands_string
-          .= "\t$name" . (" " x ($max_chars - length($name))) . "\t $desc\n";
+    unless ($commands_string) {
+
+        my @commands = keys %{$self->commands};
+
+        my @ordered = sort { $a cmp $b } @commands;
+
+        my ($max_chars) = length(
+            (
+
+                sort   { length($b) <=> length($a) }
+                  grep { not defined $self->commands->{$_}->{hidden} }
+                  @commands
+
+            )[0]
+        );
+
+        foreach my $name (@ordered) {
+
+            if (defined $self->commands->{$name}->{hidden}) {
+
+                next;
+
+            }
+
+            my $desc = $self->commands->{$name}->{abstract}
+              || 'This Command has no Description';
+
+            $commands_string
+              .= "\t$name"
+              . (" " x ($max_chars - length($name)))
+              . "\t $desc\n";
+
+        }
 
     }
 
@@ -295,7 +381,7 @@ sub _command_help {
         
         usage: $0 COMMAND [ARGS]
         
-        The currently registered commands are:
+        The command(s) info is as follows:
            
             $commands_string
         
@@ -311,7 +397,11 @@ sub _command_start {
 
     my $pid = fork;
 
-    exec $0, "start_background" unless $pid;
+    $opts->{workers} = delete $opts->{w} if $opts->{w};
+
+    $opts->{workers} ||= 3;
+
+    exec $0, "start_background", "w:$opts->{workers}" unless $pid;
 
     exit print "Starting ESS Background Process (pid: $$)\n";
 
@@ -323,9 +413,56 @@ sub _command_start_background {
 
     require "Email/Sender/Server/Manager.pm";
 
-    my $manager = Email::Sender::Server::Manager->new;
+    $opts->{workers} = delete $opts->{w} if $opts->{w};
+
+    $opts->{workers} ||= 3;
+
+    my $manager =
+      Email::Sender::Server::Manager->new(spawn => $opts->{workers});
 
     $manager->process_workload;
+
+}
+
+sub _command_status {
+
+    my ($self, $opts) = @_;
+
+    require "Email/Sender/Server/Manager.pm";
+
+    my $manager = Email::Sender::Server::Manager->new;
+
+    my $queued_count = @{$manager->message_filelist} || 0;
+
+    print "ESS Qeueue has $queued_count Message(s)\n";
+
+    opendir my $workspace_hdl, $manager->directory('worker');
+
+    my @workers = grep { !/^\./ } readdir $workspace_hdl;
+
+    if (@workers) {
+
+        print "ESS Currently Employs " . @workers . " Worker(s)\n\n";
+
+        foreach my $worker (@workers) {
+
+            my $count = @{$manager->message_filelist('worker', $worker)} || 0;
+
+            print "\tESS Worker $worker is Processing $count Message(s)\n";
+
+        }
+
+        print "\n";
+
+    }
+
+    my $passed_count = @{$manager->message_filelist('passed')} || 0;
+    my $failed_count = @{$manager->message_filelist('failed')} || 0;
+
+    print "ESS has successfully processed $passed_count Message(s)\n";
+    print "ESS has failed to process $failed_count Message(s)\n";
+
+    exit;
 
 }
 

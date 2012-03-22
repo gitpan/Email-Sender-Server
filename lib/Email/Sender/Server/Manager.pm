@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.15';
+    $Email::Sender::Server::Manager::VERSION = '0.18';
 }
 
 use strict;
@@ -26,7 +26,7 @@ use Class::Date;
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.15';    # VERSION
+our $VERSION = '0.18';    # VERSION
 
 
 has spawn => 3;
@@ -72,7 +72,7 @@ sub cleanup {
 
     opendir my $directory, $self->directory('worker');
 
-    my @workers = readdir $directory;
+    my @workers = grep { !/^\./ } readdir $directory;
 
     foreach my $worker (@workers) {
 
@@ -343,7 +343,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.15
+version 0.18
 
 =head1 SYNOPSIS
 

@@ -2,7 +2,7 @@ NAME
     Email::Sender::Server - Eventual Email Delivery System
 
 VERSION
-    version 0.15
+    version 0.18
 
 SYNOPSIS
         $ ess help
@@ -24,6 +24,10 @@ SYNOPSIS
             print $mailer->errors_to_string;
         
         }
+
+    maybe ...
+
+        $ ess config # set some defaults in ./.ess/ess.cfg
 
     maybe ...
 

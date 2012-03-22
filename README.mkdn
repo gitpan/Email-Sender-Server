@@ -4,7 +4,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 # VERSION
 
-version 0.15
+version 0.18
 
 # SYNOPSIS
 
@@ -32,6 +32,10 @@ then ...
         
 
     }
+
+maybe ...
+
+    $ ess config # set some defaults in ./.ess/ess.cfg
 
 maybe ...
 

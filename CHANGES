@@ -1,6 +1,12 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
-0.13 (2012-03-22)
+0.18 (2012-03-22)
+    * added usage info for CLI commands
+    * added status command to the CLI
+    * fixed slight issue in Manager.pm
+    * few POD changes
+
+0.15 (2012-03-22)
     * added config, email and clean commands to the CLI
     * add ability to override message parameter defaults
     * fixed and updated POD

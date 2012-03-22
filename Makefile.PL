@@ -33,9 +33,9 @@ my %WriteMakefileArgs = (
     "File::Spec" => 0,
     "File::Type" => 0,
     "IO::All" => 0,
-    "Validation::Class" => "5.80"
+    "Validation::Class" => "5.82"
   },
-  "VERSION" => "0.15",
+  "VERSION" => "0.18",
   "test" => {
     "TESTS" => "t/*.t"
   }

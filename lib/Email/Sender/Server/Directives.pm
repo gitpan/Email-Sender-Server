@@ -1,6 +1,6 @@
 package Email::Sender::Server::Directives;
 {
-    $Email::Sender::Server::Directives::VERSION = '0.15';
+    $Email::Sender::Server::Directives::VERSION = '0.18';
 }
 
 use strict;
@@ -10,7 +10,7 @@ use Validation::Class;
 
 use Data::Validate::Email;
 
-our $VERSION = '0.15';    # VERSION
+our $VERSION = '0.18';    # VERSION
 
 dir 'is_email' => sub {
 

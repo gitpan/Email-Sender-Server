@@ -2,7 +2,7 @@
 
 package Email::Sender::Server;
 {
-    $Email::Sender::Server::VERSION = '0.15';
+    $Email::Sender::Server::VERSION = '0.18';
 }
 
 use strict;
@@ -12,7 +12,7 @@ use Validation::Class;
 
 use Email::Sender::Server::Controller;
 
-our $VERSION = '0.15';    # VERSION
+our $VERSION = '0.18';    # VERSION
 
 
 sub run {
@@ -46,7 +46,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 =head1 VERSION
 
-version 0.15
+version 0.18
 
 =head1 SYNOPSIS
 
@@ -69,6 +69,10 @@ then ...
         print $mailer->errors_to_string;
         
     }
+
+maybe ...
+
+    $ ess config # set some defaults in ./.ess/ess.cfg
 
 maybe ...
 
