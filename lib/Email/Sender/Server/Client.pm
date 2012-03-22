@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Client;
 {
-    $Email::Sender::Server::Client::VERSION = '0.13';
+    $Email::Sender::Server::Client::VERSION = '0.15';
 }
 
 use strict;
@@ -17,18 +17,32 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(mail);
 
-our $VERSION = '0.13';    # VERSION
+our $VERSION = '0.15';    # VERSION
 
 
-sub mail { __PACKAGE__->new->send(@_) }
+sub mail {
 
-has path => '';
+    my %input = @_;
+
+    my $self = __PACKAGE__->new;
+
+    $ENV{ESS_DATA} = delete $input{'path'} if $input{'path'};
+
+    my $manager = Email::Sender::Server::Manager->new;
+
+    my $result = $manager->create_work(%input);
+
+    $self->set_errors($manager->get_errors) if $manager->error_count;
+
+    return $self, $result;
+
+}
 
 sub send {
 
     my ($self, %input) = @_;
 
-    $ENV{ESS_DATA} = $self->path if $self->path;
+    $ENV{ESS_DATA} = delete $input{'path'} if $input{'path'};
 
     my $manager = Email::Sender::Server::Manager->new;
 
@@ -51,7 +65,7 @@ Email::Sender::Server::Client - Email Delivery Agent
 
 =head1 VERSION
 
-version 0.13
+version 0.15
 
 =head1 SYNOPSIS
 
@@ -61,11 +75,13 @@ version 0.13
     
     my @message = (to => '...', subject => '...', body => '...');
     
-    my $mail = mail(@message);
+    push @message, 'path', '/path/to/parent/folder'; # where ess is running
     
-    unless ($mail->error_count) {
+    my ($m, $id) = mail @message;
+    
+    unless ($id) {
         
-        print $mail->id;
+        die $m->errors_to_string;
         
     }
 
@@ -73,15 +89,15 @@ or using an object-oriented approach ....
 
     use Email::Sender::Server::Client;
     
-    my $mail = Email::Sender::Server::Client->new;
+    my $client = Email::Sender::Server::Client->new;
     
     my @message = (to => '...', subject => '...', body => '...');
     
-    $mail->send(@message);
+    my $id = $client->send(@message);
     
-    if ($mail->error_count) {
+    if ($client->error_count) {
         
-        print $mail->errors_to_string;
+        print $client->errors_to_string;
         
     }
 
@@ -89,7 +105,7 @@ altering or using a non-sendmail transport ...
 
     use Email::Sender::Server::Client;
     
-    my $mail = Email::Sender::Server::Client->new;
+    my $client = Email::Sender::Server::Client->new;
     
     my @message = (to => '...', subject => '...', body => '...');
     
@@ -107,11 +123,11 @@ altering or using a non-sendmail transport ...
     
     };
     
-    $mail->send(@message);
+    $client->send(@message);
     
-    if ($mail->error_count) {
+    if ($client->error_count) {
         
-        print $mail->errors_to_string;
+        print $client->errors_to_string;
         
     }
 
@@ -124,12 +140,16 @@ various different scripts.
 
 The ESS_DATA environment variable can be set to change the path of the .ess
 directory utilized by the current program, otherwise you may use the path
-attribute.
+parameter. When changing the path to the .ess directory, please specify a path
+to the parent directory and not the .ess directory itself.
 
-    use Email::Sender::Server::Client;
+    use Email::Sender::Server::Client 'mail';
     
-    my $mail = Email::Sender::Server::Client->new(
-        path => '/path/to/.ess-folder'
+    my $m = mail (
+        
+        to => '...', from => '...', ...
+        path => '/path/to/parent/folder',
+        
     );
 
 =head1 DESCRIPTION

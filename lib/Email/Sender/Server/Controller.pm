@@ -1,6 +1,6 @@
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.13';
+    $Email::Sender::Server::Controller::VERSION = '0.15';
 }
 
 use strict;
@@ -8,7 +8,7 @@ use warnings;
 
 use Validation::Class;
 
-our $VERSION = '0.13';    # VERSION
+our $VERSION = '0.15';    # VERSION
 
 has arguments => sub {
     [
@@ -23,9 +23,30 @@ has commands => sub {
 
         # command-line commands
 
+        clean => {
+
+            abstract => 'cleanup the file system',
+            routine  => \&_command_clean
+
+        },
+
+        config => {
+
+            abstract => 'generate a config file',
+            routine  => \&_command_config
+
+        },
+
+        email => {
+
+            abstract => 'send an email real quick',
+            routine  => \&_command_email
+
+        },
+
         help => {
 
-            abstract => 'Display Usage Information',
+            abstract => 'display usage information',
             routine  => \&_command_help,
             hidden   => 1
 
@@ -33,14 +54,14 @@ has commands => sub {
 
         start => {
 
-            abstract => 'Start Processing the Email Queue',
+            abstract => 'start processing the email queue',
             routine  => \&_command_start
 
         },
 
         start_background => {
 
-            abstract => 'Process the Email Queue in the Background',
+            abstract => 'process the email queue in the background',
             routine  => \&_command_start_background,
             hidden   => 1
 
@@ -48,7 +69,7 @@ has commands => sub {
 
         stop => {
 
-            abstract => 'Stop Processing the Email Queue',
+            abstract => 'stop processing the email queue',
             routine  => \&_command_stop
 
         },
@@ -94,21 +115,19 @@ mth execute_command => {
 
         my $output = $self->commands->{$command}->{routine}->($self, $options);
 
-        if ($output) {
+        unless ($output) {
 
-            $output =~ s/^[ ]+//gm;
-            $output =~ s/^\n +/\n/gm;
-            $output =~ s/^\n{2,}/\n/gm;
-            $output =~ s/\n+$/\n/;
+            my @errors =
+              ("\nError while executing $0 command ($command):\n\n");
 
-        }
-
-        else {
-
-            $output = join "\n", "\n", "Error while executing $0 command:",
-              $self->get_errors, "\n"
+            $output = join "\n", @errors, $self->get_errors, "\n";
 
         }
+
+        $output =~ s/^[ ]+//gm;
+        $output =~ s/^\n +/\n/gm;
+        $output =~ s/^\n{2,}/\n/gm;
+        $output =~ s/\n+$/\n/;
 
         print $output, "\n";
 
@@ -157,6 +176,82 @@ sub parse_arguments {
     }
 
     return $params;
+
+}
+
+sub _command_clean {
+
+    my ($self, $opts) = @_;
+
+    system $0, "stop";
+
+    require "Email/Sender/Server/Manager.pm";
+
+    my $manager = Email::Sender::Server::Manager->new;
+
+    $manager->cleanup;
+
+    exit print "ESS Cleanup, Repair and Recovery Completed\n";
+
+}
+
+sub _command_config {
+
+    my ($self, $opts) = @_;
+
+    require "Email/Sender/Server/Manager.pm";
+
+    my $manager = Email::Sender::Server::Manager->new;
+
+    $manager->create_config;
+
+    exit print "ESS Config File Generated To Override Defaults\n";
+
+}
+
+sub _command_email {
+
+    my ($self, $opts) = @_;
+
+    require "Email/Sender/Server/Client.pm";
+
+    my $client = Email::Sender::Server::Client->new;
+
+    # capture message body from stdin
+
+    if ($opts->{text} xor $opts->{html}) {
+
+        my @content = (<STDIN>);
+
+        if (@content) {
+
+            if ($opts->{text}) {
+
+                $opts->{text} = join "", @content;
+
+            }
+
+            if ($opts->{html}) {
+
+                $opts->{html} = join "", @content;
+
+            }
+
+        }
+
+    }
+
+    my $id = $client->send(%{$opts});
+
+    if ($client->error_count) {
+
+        $self->set_errors($client->get_errors);
+
+        return;
+
+    }
+
+    exit print "Submitted Email for Processing (msg: $id)\n";
 
 }
 

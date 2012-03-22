@@ -2,7 +2,7 @@
 
 package Email::Sender::Server;
 {
-    $Email::Sender::Server::VERSION = '0.13';
+    $Email::Sender::Server::VERSION = '0.15';
 }
 
 use strict;
@@ -12,7 +12,7 @@ use Validation::Class;
 
 use Email::Sender::Server::Controller;
 
-our $VERSION = '0.13';    # VERSION
+our $VERSION = '0.15';    # VERSION
 
 
 sub run {
@@ -46,7 +46,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 =head1 VERSION
 
-version 0.13
+version 0.15
 
 =head1 SYNOPSIS
 
@@ -70,6 +70,18 @@ then ...
         
     }
 
+maybe ...
+
+    $ tree ./.ess/ # ... peek behind the curtain
+
+also, from the command-line ...
+
+    $ ess email to:anewkirk@ana.io from:you@yoursite.com subject:Howdy ...
+    
+    # or .. err
+    
+    $ cat textfile.txt | ess email :text to:anewkirk@ana.io  ...
+
 =head1 DESCRIPTION
 
 Email::Sender::Server is designed to provide a simple client API for sending
@@ -78,7 +90,7 @@ creation and delivery events, thus email delivery becomes eventual in-that email
 messages are not required to be delivered immediately.
 
 This is very much a work in-progress, more documentation soon to come, see
-L<Email::Sender::Server> for common usage exmaples.
+L<Email::Sender::Server::Client> for usage exmaples.
 
 =head1 AUTHOR
 

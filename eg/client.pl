@@ -14,14 +14,6 @@ my @message = (
     html    => 'Suspendisse sit amet orci nec purus varius pharetra.'
 );
 
-#my $result = mail @message;
+my ($msg, $id) = mail @message;
 
-#print $result, "\n";
-
-my $mailer = Email::Sender::Server::Client->new(
-    path => '/tmp/mailer'
-);
-
-print $mailer->send(@message), "\n";
-
-# print $mailer->errors_to_string, "\n";
+print $id, "\n";

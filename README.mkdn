@@ -4,7 +4,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 # VERSION
 
-version 0.13
+version 0.15
 
 # SYNOPSIS
 
@@ -33,6 +33,20 @@ then ...
 
     }
 
+maybe ...
+
+    $ tree ./.ess/ # ... peek behind the curtain
+
+also, from the command-line ...
+
+    $ ess email to:anewkirk@ana.io from:you@yoursite.com subject:Howdy ...
+    
+
+    # or .. err
+    
+
+    $ cat textfile.txt | ess email :text to:anewkirk@ana.io  ...
+
 # DESCRIPTION
 
 Email::Sender::Server is designed to provide a simple client API for sending
@@ -41,7 +55,7 @@ creation and delivery events, thus email delivery becomes eventual in-that email
 messages are not required to be delivered immediately.
 
 This is very much a work in-progress, more documentation soon to come, see
-[Email::Sender::Server](http://search.cpan.org/perldoc?Email::Sender::Server) for common usage exmaples.
+[Email::Sender::Server::Client](http://search.cpan.org/perldoc?Email::Sender::Server::Client) for usage exmaples.
 
 # AUTHOR
 

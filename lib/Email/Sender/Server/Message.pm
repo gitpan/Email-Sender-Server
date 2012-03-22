@@ -1,6 +1,6 @@
 package Email::Sender::Server::Message;
 {
-    $Email::Sender::Server::Message::VERSION = '0.13';
+    $Email::Sender::Server::Message::VERSION = '0.15';
 }
 
 use strict;
@@ -18,11 +18,62 @@ use Email::Sender::Simple 'sendmail';
 
 set {
 
-    roles => ['Email::Sender::Server::Directives']
+    roles =>
+      ['Email::Sender::Server::Base', 'Email::Sender::Server::Directives']
 
 };
 
-our $VERSION = '0.13';    # VERSION
+our $VERSION = '0.15';    # VERSION
+
+bld sub {
+
+    my ($self) = @_;
+
+    # set defaults from config file
+
+    my $config = $self->filepath('ess.cfg');
+
+    if (-e $config) {
+
+        my $data = do $config;
+
+        return $self unless "HASH" eq ref $data;
+
+        $self->to($data->{message}->{to})
+          if $data->{message}->{to};
+
+        $self->from($data->{message}->{from})
+          if $data->{message}->{from};
+
+        $self->subject($data->{message}->{subject})
+          if $data->{message}->{subject};
+
+        $self->cc($data->{message}->{cc})
+          if $data->{message}->{cc};
+
+        $self->bcc($data->{message}->{bcc})
+          if $data->{message}->{bcc};
+
+        $self->reply_to($data->{message}->{reply_to})
+          if $data->{message}->{reply_to};
+
+        $self->transport($data->{transport})
+          if $data->{transport};
+
+        $self->headers($data->{headers})
+          if $data->{headers};
+
+        $self->attachments($data->{attachments})
+          if $data->{attachments};
+
+        $self->tags($data->{tags})
+          if $data->{tags};
+
+    }
+
+    return $self;
+
+};
 
 mxn basic => {
 
@@ -35,9 +86,7 @@ mxn basic => {
 mxn body => {
 
     required   => 1,
-    min_length => 2,
-    max_length => 255,
-    filters    => ['trim', 'strip']
+    min_length => 2
 
 };
 
@@ -82,7 +131,7 @@ has headers => sub {
                 my $name    = "Email-Sender-Server";
                 my $version = '0.00';
 
-                eval { $version = ${__PACKAGE__ . "::VERSION"} };
+                eval { $version = $Email::Sender::Server::Message::VERSION };
 
                 join " ", $name, $version || '0.00'
 

@@ -1,16 +1,22 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
-0.13 (2012-03-21)
-    * fixed big bug in Message.pm from_hash method setting the message body
+0.13 (2012-03-22)
+    * added config, email and clean commands to the CLI
+    * add ability to override message parameter defaults
+    * fixed and updated POD
+    * removed silly constraints from the message body attributes
 
-0.12 (2012-03-15)
+0.13 (2012-03-21)
+    * fixed big bug in Message.pm send method setting the message body
+
+0.12 (2012-03-20)
     * fixed big bug in Message.pm to_hash method handling the body
     * updated POD
 
-0.11 (2012-03-15)
+0.11 (2012-03-20)
     * fixed big typo in Message.pm from_hash method
 
-0.10 (2012-03-15)
+0.10 (2012-03-19)
     * first official release (no POD, no tests)
 
 0.01_02 (2012-03-15)

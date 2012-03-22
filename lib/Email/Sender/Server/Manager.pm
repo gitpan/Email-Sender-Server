@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.13';
+    $Email::Sender::Server::Manager::VERSION = '0.15';
 }
 
 use strict;
@@ -26,7 +26,7 @@ use Class::Date;
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.13';    # VERSION
+our $VERSION = '0.15';    # VERSION
 
 
 has spawn => 3;
@@ -99,6 +99,52 @@ sub cleanup {
     my $killer = $self->filepath('shutdown');
 
     unlink $killer if -e $killer;
+
+    return $self;
+
+}
+
+sub create_config {
+
+    my ($self) = @_;
+
+    my $cfg = $self->filepath('ess.cfg');
+
+    unless (-e $cfg) {
+
+        open(my $file, '>', $cfg)
+          or confess "Couldn't find or access (write-to) the config file $cfg";
+
+        # write config file template
+
+        print $file Dumper {
+
+            message => {
+
+                from => '',
+
+            },
+
+            transport => {
+
+                Sendmail => {
+
+                    sendmail => do {
+
+                        my $path = `which sendmail`;
+                        $path =~ s/[\r\n]//g;
+
+                        $path || '/usr/sbin/sendmail';
+
+                      }
+
+                  }
+
+              }
+
+        };
+
+    }
 
     return $self;
 
@@ -297,7 +343,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.13
+version 0.15
 
 =head1 SYNOPSIS
 
