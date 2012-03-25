@@ -4,7 +4,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 # VERSION
 
-version 0.19
+version 0.20
 
 # SYNOPSIS
 

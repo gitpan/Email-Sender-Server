@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Client;
 {
-    $Email::Sender::Server::Client::VERSION = '0.19';
+    $Email::Sender::Server::Client::VERSION = '0.20';
 }
 
 use strict;
@@ -17,7 +17,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(mail);
 
-our $VERSION = '0.19';    # VERSION
+our $VERSION = '0.20';    # VERSION
 
 
 sub mail {
@@ -66,7 +66,7 @@ Email::Sender::Server::Client - Email Delivery Agent
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =head1 SYNOPSIS
 
@@ -88,11 +88,11 @@ version 0.19
         
     }
     
-    my ($mailer, $msg_id) = mail @message;
+    my ($client, $msg_id) = mail @message;
     
     unless ($msg_id) {
         
-        die $mailer->errors_to_string;
+        die $client->errors_to_string;
         
     }
 
@@ -179,6 +179,22 @@ to the server. It accepts valid attributes accepted by
 L<Email::Sender::Server::Message>. It returns a list of two elements, a client
 object and the filepath of the queued message if the operation was successful.
 
+    use Email::Sender::Server::Client 'mail';
+    
+    my @message = (
+        to      => '...',
+        subject => '...',
+        body    => '...',
+    );
+    
+    my ($client, $msg_id) = mail @message;
+    
+    unless ($msg_id) {
+        
+        die $client->errors_to_string;
+        
+    }
+
 =head1 METHODS
 
 =head2 send
@@ -187,6 +203,20 @@ The send method is designed to provide an object-oriented approach for sending
 emails to the server. It accepts all valid attributes accepted by
 L<Email::Sender::Server::Message>. It returns a the filepath of the queued
 message if the operation was successful.
+
+    use Email::Sender::Server::Client;
+    
+    my $client = Email::Sender::Server::Client->new;
+    
+    my @message = (to => '...', subject => '...', body => '...');
+    
+    my $msg_id = $client->send(@message);
+    
+    if ($client->error_count) {
+        
+        print $client->errors_to_string;
+        
+    }
 
 =head1 AUTHOR
 

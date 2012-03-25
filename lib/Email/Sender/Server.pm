@@ -2,7 +2,7 @@
 
 package Email::Sender::Server;
 {
-    $Email::Sender::Server::VERSION = '0.19';
+    $Email::Sender::Server::VERSION = '0.20';
 }
 
 use strict;
@@ -12,7 +12,7 @@ use Validation::Class;
 
 use Email::Sender::Server::Controller;
 
-our $VERSION = '0.19';    # VERSION
+our $VERSION = '0.20';    # VERSION
 
 
 sub run {
@@ -46,7 +46,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 =head1 VERSION
 
-version 0.19
+version 0.20
 
 =head1 SYNOPSIS
 
