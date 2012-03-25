@@ -1,6 +1,6 @@
 package Email::Sender::Server::Base;
 {
-    $Email::Sender::Server::Base::VERSION = '0.20';
+    $Email::Sender::Server::Base::VERSION = '0.21';
 }
 
 use strict;
@@ -10,9 +10,10 @@ use Validation::Class;
 
 use Carp 'confess';
 use File::Path 'mkpath';
-use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir';
+use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir',
+  'splitpath';
 
-our $VERSION = '0.20';    # VERSION
+our $VERSION = '0.21';    # VERSION
 
 bld sub {
 
@@ -52,9 +53,15 @@ sub directory {
 
     my $self = shift;
 
+    my ($v, $p, $f) = splitpath $0 if $0;
+
+    $f ||= 'ess';
+
+    my $program = ".$f";
+
     my $directory = $ENV{ESS_DATA} || curdir();
 
-    $directory = catdir splitdir join '/', $directory, '.ess';
+    $directory = catdir splitdir join '/', $directory, $program;
     mkpath $directory unless -d $directory;
 
     if (@_) {

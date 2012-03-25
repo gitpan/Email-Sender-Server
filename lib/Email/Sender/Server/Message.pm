@@ -1,6 +1,6 @@
 package Email::Sender::Server::Message;
 {
-    $Email::Sender::Server::Message::VERSION = '0.20';
+    $Email::Sender::Server::Message::VERSION = '0.21';
 }
 
 use strict;
@@ -23,7 +23,7 @@ set {
 
 };
 
-our $VERSION = '0.20';    # VERSION
+our $VERSION = '0.21';    # VERSION
 
 bld sub {
 

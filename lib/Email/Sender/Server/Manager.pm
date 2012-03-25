@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.20';
+    $Email::Sender::Server::Manager::VERSION = '0.21';
 }
 
 use strict;
@@ -20,7 +20,7 @@ use Class::Date;
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.20';    # VERSION
+our $VERSION = '0.21';    # VERSION
 
 set {
 
@@ -112,7 +112,9 @@ sub create_config {
 
     my ($self) = @_;
 
-    my $cfg = $self->filepath('ess.cfg');
+    return unless $0;
+
+    my $cfg = "$0.cfg";
 
     unless (-e $cfg) {
 
@@ -349,7 +351,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.20
+version 0.21
 
 =head1 SYNOPSIS
 

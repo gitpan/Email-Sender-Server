@@ -1,5 +1,8 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.21 (2012-03-25)
+    * minor miscellaneous changes (e.g. config file lives along-side the exe)
+
 0.19 (2012-03-24)
     * miscellaneous POD changes
 
