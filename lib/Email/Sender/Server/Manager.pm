@@ -2,19 +2,13 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.18';
+    $Email::Sender::Server::Manager::VERSION = '0.19';
 }
 
 use strict;
 use warnings;
 
 use Validation::Class;
-
-set {
-
-    roles => ['Email::Sender::Server::Base']
-
-};
 
 use Carp 'confess';
 use File::Copy 'move';
@@ -26,10 +20,17 @@ use Class::Date;
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.18';    # VERSION
+our $VERSION = '0.19';    # VERSION
+
+set {
+
+    roles => ['Email::Sender::Server::Base']
+
+};
 
 
 has spawn => 3;
+
 
 has workers => sub {
     [
@@ -38,6 +39,7 @@ has workers => sub {
 
     ];
 };
+
 
 has workspace => sub {
 
@@ -63,6 +65,7 @@ bld sub {
     return $self;
 
 };
+
 
 sub cleanup {
 
@@ -103,6 +106,7 @@ sub cleanup {
     return $self;
 
 }
+
 
 sub create_config {
 
@@ -149,6 +153,7 @@ sub create_config {
     return $self;
 
 }
+
 
 sub create_work {
 
@@ -210,6 +215,7 @@ sub create_work {
     }
 
 }
+
 
 sub process_workload {
 
@@ -343,25 +349,166 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
-    # record and delegate email message processing
-    
     use Email::Sender::Server::Manager;
     
     my $manager = Email::Sender::Server::Manager->new;
     
-    $worker->queue_message($message);
+    # create a list of Email::Sender::Server::Message attribute values
     
-    $worker->process_queue;
+    my @message = (
+        to      => '...',
+        subject => '...',
+        body    => '...',
+    );
+    
+    # validate and record an email message
+    
+    $manager->create_work(@message);
+    
+    # delegate and process email messages
+    
+    $manager->process_workload; # blocking
 
 =head1 DESCRIPTION
 
-Email::Sender::Server::Manager is the liason between the client, server and
-workers. This class is responsible for storing and processing messages through
-workers, see L<Email::Sender::Server::Worker>.
+Email::Sender::Server::Manager is responsible for communicating messages between
+the client, server and workers. Specifically, this class is responsible for
+queuing and assigning email requests to worker processes for eventual delivery.
+
+See L<Email::Sender::Server::Worker> for more information about that process.
+
+=head1 ATTRIBUTES
+
+=head2 spawn
+
+The spawn attribute represents the number of workers to create when processing
+the email queue. This attribute defaults to 3 (worker processes).
+
+    use Email::Sender::Server::Manager;
+    
+    my $mgr = Email::Sender::Server::Manager->new(
+        spawn => 10
+    );
+
+=head2 workers
+
+The workers attribute contains an arrayref of worker process IDs. This value is
+empty by default and is set internally by the process_workload() method.
+
+    use Email::Sender::Server::Manager;
+    
+    my $mgr = Email::Sender::Server::Manager->new;
+    
+    $mgr->workers;
+
+=head2 workspace
+
+The workspace attribute contains the directory path to the queued emails
+directory. 
+
+    use Email::Sender::Server::Manager;
+    
+    my $mgr = Email::Sender::Server::Manager->new;
+    
+    $mgr->workspace;
+
+=head1 METHODS
+
+=head2 cleanup
+
+The cleanup method restores the data directory to its initial state, re-queuing
+any emails assigned to workers which haven't been processed yet.
+
+    use Email::Sender::Server::Manager;
+    
+    my $mgr = Email::Sender::Server::Manager->new;
+    
+    $mgr->cleanup;
+
+=head2 create_config
+
+The create_config method writes a config file to the data directory unless one
+exists. The config, if present, will be merge with L<Email::Sender::Server::Message>
+attributes when messages are created (e.g. the create_work method).
+
+    use Email::Sender::Server::Manager;
+    
+    my $mgr = Email::Sender::Server::Manager->new;
+    
+    $mgr->create_config;
+
+... which creates a config file (e.g. in ./.ess/ess.cfg) containing:
+
+    $VAR1 = {
+        
+        message {
+            
+            to   => '...',
+            from => '...',
+            
+        },
+        
+        transport => {
+            
+            SMTP => {
+                
+                host => '...',
+                port => '...'
+                
+            }
+            
+        }
+        
+    };
+
+... elsewhere in your codebase
+
+    use Email::Sender::Server::Manager;
+    
+    my $mgr = Email::Sender::Server::Manager->new;
+    
+    # to, from, and transport taken from the config if not set
+    
+    $mgr->create_work(subject => '...', text => '...');
+
+=head2 create_work
+
+The create_work method writes a message file to the data directory queuing it to
+be process by the next selected worker process. It returns the absolute path to
+the queued email message unless message validation failed. 
+
+    use Email::Sender::Server::Manager;
+    
+    my $mgr = Email::Sender::Server::Manager->new;
+    
+    my @message = (
+        to      => '...',
+        subject => '...',
+        body    => '...',
+    );
+    
+    my $filepath = $mgr->create_work(@message);
+    
+    unless ($filepath) {
+        
+        print $mgr->errors_to_string;
+        
+    }
+
+=head2 process_workload
+
+The process_workload method creates a number of worker processes based on the
+spawn attribute, forks itself and blocks until shutdown.
+
+    use Email::Sender::Server::Manager;
+    
+    my $mgr = Email::Sender::Server::Manager->new;
+    
+    $mgr->process_workload;
 
 =head1 AUTHOR
 

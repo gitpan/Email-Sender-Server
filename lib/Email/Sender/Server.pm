@@ -2,7 +2,7 @@
 
 package Email::Sender::Server;
 {
-    $Email::Sender::Server::VERSION = '0.18';
+    $Email::Sender::Server::VERSION = '0.19';
 }
 
 use strict;
@@ -12,7 +12,7 @@ use Validation::Class;
 
 use Email::Sender::Server::Controller;
 
-our $VERSION = '0.18';    # VERSION
+our $VERSION = '0.19';    # VERSION
 
 
 sub run {
@@ -46,11 +46,11 @@ Email::Sender::Server - Eventual Email Delivery System
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
-    $ ess help
+    $ ess help start
 
 then ...
 
@@ -78,7 +78,7 @@ maybe ...
 
     $ tree ./.ess/ # ... peek behind the curtain
 
-also, from the command-line ...
+also, send email from the command-line ...
 
     $ ess email to:anewkirk@ana.io from:you@yoursite.com subject:Howdy ...
     
@@ -88,13 +88,27 @@ also, from the command-line ...
 
 =head1 DESCRIPTION
 
-Email::Sender::Server is designed to provide a simple client API for sending
-emails from your applications. It accomplishes this by separating the email
-creation and delivery events, thus email delivery becomes eventual in-that email
-messages are not required to be delivered immediately.
+Email::Sender::Server is designed to provide a simple API for sending
+emails from your applications in a non-blocking fashion. It accomplishes this by
+separating the email creation and delivery events, thus email delivery becomes
+eventual in-that email messages are not required to be delivered immediately.
 
 This is very much a work in-progress, more documentation soon to come, see
 L<Email::Sender::Server::Client> for usage exmaples.
+
+=head1 METHODS
+
+=head2 run
+
+The run method is used to execute L<Email::Sender::Server::Controller> commands.
+Most commands exit abruptly and prints to STDOUT. This method is intended to be
+used at the command-line.
+
+    use Email::Sender::Server;
+    
+    my $server = Email::Sender::Server->new;
+    
+    $server->run('start', 'w:1'); # start the server with 1 worker
 
 =head1 AUTHOR
 

@@ -1,5 +1,8 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.19 (2012-03-24)
+    * miscellaneous POD changes
+
 0.18 (2012-03-22)
     * added usage info for CLI commands
     * added status command to the CLI

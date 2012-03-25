@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Client;
 {
-    $Email::Sender::Server::Client::VERSION = '0.18';
+    $Email::Sender::Server::Client::VERSION = '0.19';
 }
 
 use strict;
@@ -17,7 +17,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(mail);
 
-our $VERSION = '0.18';    # VERSION
+our $VERSION = '0.19';    # VERSION
 
 
 sub mail {
@@ -37,6 +37,7 @@ sub mail {
     return $self, $result;
 
 }
+
 
 sub send {
 
@@ -65,7 +66,7 @@ Email::Sender::Server::Client - Email Delivery Agent
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
@@ -73,15 +74,25 @@ version 0.18
     
     use Email::Sender::Server::Client 'mail';
     
-    my @message = (to => '...', subject => '...', body => '...');
+    my @message = (
+        to      => '...',
+        subject => '...',
+        body    => '...',
+    );
     
-    push @message, 'path', '/path/to/parent/folder'; # where ess is running
+    my ($client) = mail @message;
     
-    my ($m, $id) = mail @message;
-    
-    unless ($id) {
+    if ($client->error_count) {
         
-        die $m->errors_to_string;
+        die $client->errors_to_string;
+        
+    }
+    
+    my ($mailer, $msg_id) = mail @message;
+    
+    unless ($msg_id) {
+        
+        die $mailer->errors_to_string;
         
     }
 
@@ -93,7 +104,7 @@ or using an object-oriented approach ....
     
     my @message = (to => '...', subject => '...', body => '...');
     
-    my $id = $client->send(@message);
+    my $msg_id = $client->send(@message);
     
     if ($client->error_count) {
         
@@ -123,9 +134,9 @@ altering or using a non-sendmail transport ...
     
     };
     
-    $client->send(@message);
+    my ($msg_id) = $client->send(@message);
     
-    if ($client->error_count) {
+    unless ($msg_id) {
         
         print $client->errors_to_string;
         
@@ -145,20 +156,37 @@ to the parent directory and not the .ess directory itself.
 
     use Email::Sender::Server::Client 'mail';
     
-    my $m = mail (
-        
-        to => '...', from => '...', ...
-        path => '/path/to/parent/folder',
-        
-    );
+    # if you need to change the ess data directory
+    
+    push @message, path => '/path/to/ess/parent/folder' ;
+    
+    my ($client) = mail @message;
 
 =head1 DESCRIPTION
 
-Email::Sender::Server::Client provides an interface to a non-blocking email
-delivery agent which queues emails for later delivery.
+Email::Sender::Server::Client provides an interface to the ESS non-blocking
+email delivery system which queues emails for later delivery. This class is a
+simple wrapper around the L<Email::Sender::Server::Manager> class, the manager
+is responsible for queuing email messages and delegating tasks to the worker
+processes. Note, All messages are validated by L<Email::Sender::Server::Message>.
 
-Email::Sender::Server::Client wraps functionality provided by
-L<Email::Sender::Server::Message>.
+=head1 EXPORTS
+
+=head2 mail
+
+The mail method is designed to provide a simple single method for sending emails
+to the server. It accepts valid attributes accepted by
+L<Email::Sender::Server::Message>. It returns a list of two elements, a client
+object and the filepath of the queued message if the operation was successful.
+
+=head1 METHODS
+
+=head2 send
+
+The send method is designed to provide an object-oriented approach for sending
+emails to the server. It accepts all valid attributes accepted by
+L<Email::Sender::Server::Message>. It returns a the filepath of the queued
+message if the operation was successful.
 
 =head1 AUTHOR
 

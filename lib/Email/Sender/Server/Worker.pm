@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Worker;
 {
-    $Email::Sender::Server::Worker::VERSION = '0.18';
+    $Email::Sender::Server::Worker::VERSION = '0.19';
 }
 
 use strict;
@@ -22,7 +22,7 @@ use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir';
 
 use Email::Sender::Server::Message;
 
-our $VERSION = '0.18';    # VERSION
+our $VERSION = '0.19';    # VERSION
 
 
 has id => $$;
@@ -95,7 +95,7 @@ Email::Sender::Server::Worker - Email Server Worker
 
 =head1 VERSION
 
-version 0.18
+version 0.19
 
 =head1 SYNOPSIS
 
@@ -110,8 +110,8 @@ version 0.18
 =head1 DESCRIPTION
 
 Email::Sender::Server::Worker is the email processing agent which fetches messages
-from the datastore and performs some action on them, e.g. processing an email and
-delivering it to its recipient(s).
+from the data directory and performs some action on them, e.g. processing an email
+and delivering it to its recipient(s).
 
 =head1 AUTHOR
 

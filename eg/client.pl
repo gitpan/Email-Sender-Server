@@ -14,6 +14,6 @@ my @message = (
     html    => 'Suspendisse sit amet orci nec purus varius pharetra.'
 );
 
-my ($msg, $id) = mail @message;
+my ($client, $msg_id) = mail @message;
 
-print $id, "\n";
+print $msg_id, "\n";
