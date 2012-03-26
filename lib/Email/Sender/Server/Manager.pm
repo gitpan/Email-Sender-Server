@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.21';
+    $Email::Sender::Server::Manager::VERSION = '0.22';
 }
 
 use strict;
@@ -20,7 +20,7 @@ use Class::Date;
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.21';    # VERSION
+our $VERSION = '0.22';    # VERSION
 
 set {
 
@@ -351,7 +351,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 
@@ -443,7 +443,7 @@ attributes when messages are created (e.g. the create_work method).
     
     $mgr->create_config;
 
-... which creates a config file (e.g. in ./.ess/ess.cfg) containing:
+... which creates a config file (e.g. in ./ess_data/ess.cfg) containing:
 
     $VAR1 = {
         

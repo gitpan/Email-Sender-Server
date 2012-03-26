@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Worker;
 {
-    $Email::Sender::Server::Worker::VERSION = '0.21';
+    $Email::Sender::Server::Worker::VERSION = '0.22';
 }
 
 use strict;
@@ -22,7 +22,7 @@ use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir';
 
 use Email::Sender::Server::Message;
 
-our $VERSION = '0.21';    # VERSION
+our $VERSION = '0.22';    # VERSION
 
 
 has id => $$;
@@ -95,7 +95,7 @@ Email::Sender::Server::Worker - Email Server Worker
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 

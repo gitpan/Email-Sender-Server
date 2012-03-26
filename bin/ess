@@ -23,6 +23,8 @@ use Email::Sender::Server;
 
 our $VERSION = $Email::Sender::Server::VERSION || '0.0.0';
 
+# $ENV{ESS_DATA} = '/change/data/directory';
+
 Email::Sender::Server->run; # spit it out mickey-fickey
 
 __END__
@@ -34,7 +36,7 @@ ess cli - Email Sender Server CLI
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 AUTHOR
 

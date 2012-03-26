@@ -1,6 +1,6 @@
 package Email::Sender::Server::Base;
 {
-    $Email::Sender::Server::Base::VERSION = '0.21';
+    $Email::Sender::Server::Base::VERSION = '0.22';
 }
 
 use strict;
@@ -13,7 +13,7 @@ use File::Path 'mkpath';
 use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir',
   'splitpath';
 
-our $VERSION = '0.21';    # VERSION
+our $VERSION = '0.22';    # VERSION
 
 bld sub {
 
@@ -57,7 +57,7 @@ sub directory {
 
     $f ||= 'ess';
 
-    my $program = ".$f";
+    my $program = "$f\_data";
 
     my $directory = $ENV{ESS_DATA} || curdir();
 

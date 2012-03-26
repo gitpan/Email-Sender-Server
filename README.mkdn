@@ -4,7 +4,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 # VERSION
 
-version 0.21
+version 0.22
 
 # SYNOPSIS
 
@@ -35,11 +35,11 @@ then ...
 
 maybe ...
 
-    $ ess config # set some defaults in ./.ess/ess.cfg
+    $ ess config # set some defaults in ./ess_data/ess.cfg
 
 maybe ...
 
-    $ tree ./.ess/ # ... peek behind the curtain
+    $ tree ./ess_data/ # ... peek behind the curtain
 
 also, send email from the command-line ...
 

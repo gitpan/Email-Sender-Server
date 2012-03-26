@@ -1,6 +1,7 @@
+
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.21';
+    $Email::Sender::Server::Controller::VERSION = '0.22';
 }
 
 use strict;
@@ -8,7 +9,7 @@ use warnings;
 
 use Validation::Class;
 
-our $VERSION = '0.21';    # VERSION
+our $VERSION = '0.22';    # VERSION
 
 has arguments => sub {
     [
@@ -22,6 +23,24 @@ has commands => sub {
     {
 
         # command-line commands
+
+        copy => {
+
+            abstract => 'copy the ess executable',
+            routine  => \&_command_copy,
+            usage    => qq{
+            
+            command: copy
+            
+            valid arguments are:
+               
+                ess copy to:"..."    copies and renames the executable
+            
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
+
+        },
 
         clean => {
 
@@ -243,6 +262,25 @@ sub parse_arguments {
     }
 
     return $params, $sequence;
+
+}
+
+sub _command_copy {
+
+    my ($self, $opts) = @_;
+
+    return unless $opts->{to};
+
+    require "File/Copy.pm";
+    require "Email/Sender/Server/Manager.pm";
+
+    my $manager = Email::Sender::Server::Manager->new;
+
+    File::Copy::copy($0, $manager->filepath('..', $opts->{to}));
+
+    chmod 0755, $manager->filepath('..', $opts->{to});
+
+    exit print "ESS Executable Copied Successfully\n";
 
 }
 

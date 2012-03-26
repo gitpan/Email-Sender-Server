@@ -2,7 +2,7 @@
 
 package Email::Sender::Server;
 {
-    $Email::Sender::Server::VERSION = '0.21';
+    $Email::Sender::Server::VERSION = '0.22';
 }
 
 use strict;
@@ -12,7 +12,7 @@ use Validation::Class;
 
 use Email::Sender::Server::Controller;
 
-our $VERSION = '0.21';    # VERSION
+our $VERSION = '0.22';    # VERSION
 
 
 sub run {
@@ -46,7 +46,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 =head1 VERSION
 
-version 0.21
+version 0.22
 
 =head1 SYNOPSIS
 
@@ -72,11 +72,11 @@ then ...
 
 maybe ...
 
-    $ ess config # set some defaults in ./.ess/ess.cfg
+    $ ess config # set some defaults in ./ess_data/ess.cfg
 
 maybe ...
 
-    $ tree ./.ess/ # ... peek behind the curtain
+    $ tree ./ess_data/ # ... peek behind the curtain
 
 also, send email from the command-line ...
 

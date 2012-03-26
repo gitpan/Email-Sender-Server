@@ -1,5 +1,9 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.22 (2012-03-22)
+    * change the generated data directory name
+    * added copy command to the CLI
+
 0.21 (2012-03-25)
     * minor miscellaneous changes (e.g. config file lives along-side the exe)
 
