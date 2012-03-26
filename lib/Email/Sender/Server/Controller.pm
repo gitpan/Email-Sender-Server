@@ -1,7 +1,7 @@
 
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.22';
+    $Email::Sender::Server::Controller::VERSION = '0.23';
 }
 
 use strict;
@@ -9,7 +9,7 @@ use warnings;
 
 use Validation::Class;
 
-our $VERSION = '0.22';    # VERSION
+our $VERSION = '0.23';    # VERSION
 
 has arguments => sub {
     [
@@ -158,6 +158,20 @@ has commands => sub {
 
         },
 
+        version => {
+
+            abstract => 'display version information',
+            routine  => \&_command_version,
+            usage    => qq{
+            
+            command: version
+            
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
+
+        },
+
     };
 };
 
@@ -269,16 +283,20 @@ sub _command_copy {
 
     my ($self, $opts) = @_;
 
-    return unless $opts->{to};
+    my $to = $opts->{to} ||= 'new_ess';
 
     require "File/Copy.pm";
     require "Email/Sender/Server/Manager.pm";
 
     my $manager = Email::Sender::Server::Manager->new;
 
-    File::Copy::copy($0, $manager->filepath('..', $opts->{to}));
+    File::Copy::copy($0, $manager->filepath('..', $to));
+    File::Copy::move($manager->directory,
+        $manager->directory('..', "$to\_data"));
 
-    chmod 0755, $manager->filepath('..', $opts->{to});
+    chmod 0755, $manager->filepath('..', $to);
+
+    rmdir $manager->directory;
 
     exit print "ESS Executable Copied Successfully\n";
 
@@ -517,6 +535,27 @@ sub _command_stop {
     open my $fh, ">", $flag_file;
 
     exit print "ESS Processing Shutdown Sequence Initiated\n";
+
+}
+
+sub _command_version {
+
+    my ($self, $opts) = @_;
+
+    require "Email/Sender/Server/Manager.pm";
+
+    my $version = do {
+
+        my $name    = "Email-Sender-Server (ESS)";
+        my $version = '0.00';
+
+        eval { $version = $Email::Sender::Server::Manager::VERSION };
+
+        join " ", $name, $version || '0.00'
+
+    };
+
+    exit print "$version\n";
 
 }
 

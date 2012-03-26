@@ -2,7 +2,7 @@ NAME
     Email::Sender::Server - Eventual Email Delivery System
 
 VERSION
-    version 0.22
+    version 0.23
 
 SYNOPSIS
         $ ess help start

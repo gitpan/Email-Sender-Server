@@ -1,6 +1,6 @@
 package Email::Sender::Server::Base;
 {
-    $Email::Sender::Server::Base::VERSION = '0.22';
+    $Email::Sender::Server::Base::VERSION = '0.23';
 }
 
 use strict;
@@ -10,10 +10,10 @@ use Validation::Class;
 
 use Carp 'confess';
 use File::Path 'mkpath';
-use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir',
+use File::Spec::Functions 'catdir', 'catfile', 'curdir', 'splitdir',
   'splitpath';
 
-our $VERSION = '0.22';    # VERSION
+our $VERSION = '0.23';    # VERSION
 
 bld sub {
 

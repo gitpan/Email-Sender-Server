@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.22';
+    $Email::Sender::Server::Manager::VERSION = '0.23';
 }
 
 use strict;
@@ -13,14 +13,14 @@ use Validation::Class;
 use Carp 'confess';
 use File::Copy 'move';
 use File::Path 'mkpath';
-use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir';
+use File::Spec::Functions 'splitdir', 'splitpath';
 use Data::Dumper 'Dumper';
 use Class::Date;
 
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.22';    # VERSION
+our $VERSION = '0.23';    # VERSION
 
 set {
 
@@ -112,9 +112,7 @@ sub create_config {
 
     my ($self) = @_;
 
-    return unless $0;
-
-    my $cfg = "$0.cfg";
+    my $cfg = $self->filepath("config");
 
     unless (-e $cfg) {
 
@@ -351,7 +349,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.22
+version 0.23
 
 =head1 SYNOPSIS
 
@@ -443,7 +441,7 @@ attributes when messages are created (e.g. the create_work method).
     
     $mgr->create_config;
 
-... which creates a config file (e.g. in ./ess_data/ess.cfg) containing:
+... which creates a config file (e.g. in ./ess_data/config) containing:
 
     $VAR1 = {
         

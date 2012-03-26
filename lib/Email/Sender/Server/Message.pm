@@ -1,6 +1,6 @@
 package Email::Sender::Server::Message;
 {
-    $Email::Sender::Server::Message::VERSION = '0.22';
+    $Email::Sender::Server::Message::VERSION = '0.23';
 }
 
 use strict;
@@ -23,7 +23,7 @@ set {
 
 };
 
-our $VERSION = '0.22';    # VERSION
+our $VERSION = '0.23';    # VERSION
 
 bld sub {
 
@@ -31,7 +31,7 @@ bld sub {
 
     # set defaults from config file
 
-    my $config = $self->filepath('ess.cfg');
+    my $config = $self->filepath('config');
 
     if (-e $config) {
 
