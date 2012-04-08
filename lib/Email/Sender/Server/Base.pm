@@ -1,6 +1,6 @@
 package Email::Sender::Server::Base;
 {
-    $Email::Sender::Server::Base::VERSION = '0.23';
+    $Email::Sender::Server::Base::VERSION = '0.28';
 }
 
 use strict;
@@ -9,11 +9,12 @@ use warnings;
 use Validation::Class;
 
 use Carp 'confess';
+
 use File::Path 'mkpath';
-use File::Spec::Functions 'catdir', 'catfile', 'curdir', 'splitdir',
+use File::Spec::Functions 'rel2abs', 'catdir', 'catfile', 'curdir', 'splitdir',
   'splitpath';
 
-our $VERSION = '0.23';    # VERSION
+our $VERSION = '0.28';    # VERSION
 
 bld sub {
 
@@ -51,27 +52,32 @@ sub filepath {
 
 sub directory {
 
-    my $self = shift;
+    my ($self, @dir) = @_;
 
-    my ($v, $p, $f) = splitpath $0 if $0;
+    my @root = ();
 
-    $f ||= 'ess';
+    @root = (rel2abs($ENV{ESS_DATA})) if $ENV{ESS_DATA};
 
-    my $program = "$f\_data";
+    @root = (rel2abs(curdir() || (splitpath($0))[1]), 'ess_data') unless @root;
 
-    my $directory = $ENV{ESS_DATA} || curdir();
+    my $path = catdir splitdir join '/', @root;
 
-    $directory = catdir splitdir join '/', $directory, $program;
-    mkpath $directory unless -d $directory;
+    mkpath $path unless -d $path;
 
-    if (@_) {
+    if (@dir) {
 
-        $directory = catdir splitdir join '/', $directory, @_;
-        mkpath $directory unless -d $directory;
+        my $dir = $path;
+
+        for my $sub (@dir) {
+
+            $path = catdir splitdir join '/', $path, $sub;
+            mkpath $path unless -d $path;
+
+        }
 
     }
 
-    return $directory;
+    return catdir splitdir join '/', @root, @dir;
 
 }
 

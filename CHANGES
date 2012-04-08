@@ -1,5 +1,12 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.28 (2012-04-08)
+    * utf-8 handling of message file
+    * segment successful messages in the passed folder (avoid folder size limitations)
+    * turned of write-buffer for writing mail messages
+    * added testmail command to send quick test emails
+    * version bump
+
 0.23 (2012-03-26)
     * added the version command
     * updated the copy command

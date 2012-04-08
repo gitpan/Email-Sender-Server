@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.23';
+    $Email::Sender::Server::Manager::VERSION = '0.28';
 }
 
 use strict;
@@ -16,11 +16,12 @@ use File::Path 'mkpath';
 use File::Spec::Functions 'splitdir', 'splitpath';
 use Data::Dumper 'Dumper';
 use Class::Date;
+use IO::All;
 
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.23';    # VERSION
+our $VERSION = '0.28';    # VERSION
 
 set {
 
@@ -116,7 +117,7 @@ sub create_config {
 
     unless (-e $cfg) {
 
-        open(my $file, '>', $cfg)
+        open(my $file, ">:encoding(UTF-8)", $cfg)
           or confess "Couldn't find or access (write-to) the config file $cfg";
 
         # write config file template
@@ -196,11 +197,13 @@ sub create_work {
 
         my $filepath = $self->filepath('queued', $filename);
 
-        open(my $file, '>', $filepath)
+        open(my $file, ">:encoding(UTF-8)", $filepath)
           or confess
           "Couldn't find or access (write) the message file $filepath";
 
-        print $file Dumper $message;
+        $file->autoflush(1);
+
+        print {$file} Dumper $message;
 
         return $filepath;
 
@@ -247,7 +250,16 @@ sub process_workload {
 
                         my $filename = $self->message_filename($filepath);
 
-                        move $filepath, $self->filepath('passed', $filename);
+                        # segment storage in attempt to avoid filesystem
+                        # directory size error
+
+                        my @directory = ('passed');
+
+                        push @directory, ($filename =~ /(\d{4})(\d{4})/);
+
+                        push @directory, $filename;
+
+                        move $filepath, $self->filepath(@directory);
 
                     }
 
@@ -257,7 +269,16 @@ sub process_workload {
 
                         my $filename = $self->message_filename($filepath);
 
-                        move $filepath, $self->filepath('failed', $filename);
+                        # segment storage in attempt to avoid filesystem
+                        # directory size error
+
+                        my @directory = ('failed');
+
+                        push @directory, ($filename =~ /(\d{4})(\d{4})/);
+
+                        push @directory, $filename;
+
+                        move $filepath, $self->filepath(@directory);
 
                     }
 
@@ -349,7 +370,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.23
+version 0.28
 
 =head1 SYNOPSIS
 
@@ -407,7 +428,7 @@ empty by default and is set internally by the process_workload() method.
 
 =head2 workspace
 
-The workspace attribute contains the directory path to the queued emails
+The workspace attribute contains the directory path to the queued ess_data
 directory. 
 
     use Email::Sender::Server::Manager;

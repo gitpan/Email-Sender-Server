@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Client;
 {
-    $Email::Sender::Server::Client::VERSION = '0.23';
+    $Email::Sender::Server::Client::VERSION = '0.28';
 }
 
 use strict;
@@ -17,7 +17,7 @@ require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(mail);
 
-our $VERSION = '0.23';    # VERSION
+our $VERSION = '0.28';    # VERSION
 
 
 sub mail {
@@ -66,7 +66,7 @@ Email::Sender::Server::Client - Email Delivery Agent
 
 =head1 VERSION
 
-version 0.23
+version 0.28
 
 =head1 SYNOPSIS
 
@@ -150,9 +150,13 @@ be sub-optimal, especially when used in other classes that can be utilized by
 various different scripts.
 
 The ESS_DATA environment variable can be set to change the path of the ess_data
-directory utilized by the current program, otherwise you may use the path
-parameter. When changing the path to the ess_data directory, please specify a path
-to the parent directory and not the ess_data directory itself.
+(data) directory utilized by the ess program, otherwise you may use the path
+parameter.
+
+By default, a "ess_data" folder is created for you automatically in the
+current directory however when changing the path to the ess_data directory, please
+note that such a change will supercede the defaults and data will be stored at
+the path you've specified. For continuity, try to use absolute paths only!!!
 
     use Email::Sender::Server::Client 'mail';
     

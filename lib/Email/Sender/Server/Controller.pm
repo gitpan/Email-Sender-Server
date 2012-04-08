@@ -1,7 +1,7 @@
 
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.23';
+    $Email::Sender::Server::Controller::VERSION = '0.28';
 }
 
 use strict;
@@ -9,7 +9,9 @@ use warnings;
 
 use Validation::Class;
 
-our $VERSION = '0.23';    # VERSION
+use utf8;
+
+our $VERSION = '0.28';    # VERSION
 
 has arguments => sub {
     [
@@ -151,6 +153,32 @@ has commands => sub {
             usage    => qq{
             
             command: stop
+            
+            args syntax is :x for boolean and x:y for key/value
+            
+        }
+
+        },
+
+        testmail => {
+
+            abstract => 'send emails as a test',
+            routine  => \&_command_testmail,
+            usage    => qq{
+            
+            command: test
+            
+            valid arguments are:
+               
+                ess testmail i:15       send 15 test messages
+                
+                ess testmail :text      reads text from stdin
+                ess testmail :html      reads text from stdin
+                
+                ess testmail text:"..." set email body text
+                ess testmail html:"..." set email body html
+                
+                ess testmail to:me\@abc.co from:you\@abc.co subject:test
             
             args syntax is :x for boolean and x:y for key/value
             
@@ -492,6 +520,30 @@ sub _command_status {
 
     print "ESS Qeueue has $queued_count Message(s)\n";
 
+    sub count_files_in_directory {
+
+        my ($directory) = @_;
+
+        my @files = (glob "$directory/*.msg");
+
+        my $count = scalar @files;
+
+        my @sub_directories = grep {
+
+            -d $_ && $_ !~ /\.+$/
+
+        } glob "$directory/*";
+
+        for my $directory (@sub_directories) {
+
+            $count += count_files_in_directory($directory);
+
+        }
+
+        return $count;
+
+    }
+
     opendir my $workspace_hdl, $manager->directory('worker');
 
     my @workers = grep { !/^\./ } readdir $workspace_hdl;
@@ -512,8 +564,9 @@ sub _command_status {
 
     }
 
-    my $passed_count = @{$manager->message_filelist('passed')} || 0;
-    my $failed_count = @{$manager->message_filelist('failed')} || 0;
+    my $passed_count = count_files_in_directory($manager->directory('passed'));
+
+    my $failed_count = count_files_in_directory($manager->directory('failed'));
 
     print "ESS has successfully processed $passed_count Message(s)\n";
     print "ESS has failed to process $failed_count Message(s)\n";
@@ -535,6 +588,75 @@ sub _command_stop {
     open my $fh, ">", $flag_file;
 
     exit print "ESS Processing Shutdown Sequence Initiated\n";
+
+}
+
+sub _command_testmail {
+
+    my ($self, $opts) = @_;
+
+    require "Email/Sender/Server/Client.pm";
+
+    if ($opts->{text} xor $opts->{html}) {
+
+        my @content = (<STDIN>);
+
+        if (@content) {
+
+            if ($opts->{text}) {
+
+                $opts->{text} = join "", @content;
+
+            }
+
+            if ($opts->{html}) {
+
+                $opts->{html} = join "", @content;
+
+            }
+
+        }
+
+    }
+
+    my $i = $opts->{i} || 1;
+
+    for (1 .. $i) {
+
+        my $client = Email::Sender::Server::Client->new;
+
+        my @message = (
+            to      => $opts->{to},
+            from    => $opts->{from},
+            subject => $opts->{subject} || "ESS Test Msg: #" . $i,
+            html    => $opts->{text}
+              || $opts->{html}
+              || q{
+                # text
+                The quick brown fox jumps over the ......
+                
+                # random lorem
+                Lorem ipsum dolor sit amet, esse modus mundi id usu, dicit ....
+                
+                # random l33t
+                1T y0ur kl1k c4n, be r35u|7z n0n-3N9l1sh c@N, t3H 1T 1n70 250m p1cz!
+    
+                # random chinese
+                            ク饎 ゐ椩か 諯そ稪
+                
+            }
+        );
+
+        my $msg_id = $client->send(@message);
+
+        $msg_id
+          ? print "Processed email to: $message[1] - $msg_id\n"
+          : print "Failed processing email: "
+          . $client->errors_to_string . "\n";
+
+    }
+
+    exit print "ESS has processed $i test messages (hope everything is OK)\n";
 
 }
 
