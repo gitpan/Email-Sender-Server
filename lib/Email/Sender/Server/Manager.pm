@@ -2,11 +2,13 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.28';
+    $Email::Sender::Server::Manager::VERSION = '0.30';
 }
 
 use strict;
 use warnings;
+
+use utf8;
 
 use Validation::Class;
 
@@ -15,13 +17,14 @@ use File::Copy 'move';
 use File::Path 'mkpath';
 use File::Spec::Functions 'splitdir', 'splitpath';
 use Data::Dumper 'Dumper';
+use File::Slurp 'write_file', 'read_file';
 use Class::Date;
-use IO::All;
-
 use Email::Sender::Server::Message;
 use Email::Sender::Server::Worker;
 
-our $VERSION = '0.28';    # VERSION
+$Data::Dumper::Useperl = 1;
+
+our $VERSION = '0.30';    # VERSION
 
 set {
 
@@ -117,12 +120,10 @@ sub create_config {
 
     unless (-e $cfg) {
 
-        open(my $file, ">:encoding(UTF-8)", $cfg)
-          or confess "Couldn't find or access (write-to) the config file $cfg";
-
         # write config file template
 
-        print $file Dumper {
+        write_file $cfg, {binmode => ':utf8'}, join "\n\n",
+          'use utf8;' . Dumper {
 
             message => {
 
@@ -147,7 +148,7 @@ sub create_config {
 
               }
 
-        };
+          };
 
     }
 
@@ -197,13 +198,8 @@ sub create_work {
 
         my $filepath = $self->filepath('queued', $filename);
 
-        open(my $file, ">:encoding(UTF-8)", $filepath)
-          or confess
-          "Couldn't find or access (write) the message file $filepath";
-
-        $file->autoflush(1);
-
-        print {$file} Dumper $message;
+        write_file $filepath, {binmode => ':utf8'},
+          join "\n\n", 'use utf8;' . Dumper $message;
 
         return $filepath;
 
@@ -370,7 +366,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.28
+version 0.30
 
 =head1 SYNOPSIS
 

@@ -1,7 +1,7 @@
 
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.28';
+    $Email::Sender::Server::Controller::VERSION = '0.30';
 }
 
 use strict;
@@ -11,7 +11,7 @@ use Validation::Class;
 
 use utf8;
 
-our $VERSION = '0.28';    # VERSION
+our $VERSION = '0.30';    # VERSION
 
 has arguments => sub {
     [
@@ -629,22 +629,24 @@ sub _command_testmail {
             to      => $opts->{to},
             from    => $opts->{from},
             subject => $opts->{subject} || "ESS Test Msg: #" . $i,
-            html    => $opts->{text}
+            text    => $opts->{text}
               || $opts->{html}
-              || q{
-                # text
-                The quick brown fox jumps over the ......
-                
-                # random lorem
-                Lorem ipsum dolor sit amet, esse modus mundi id usu, dicit ....
-                
-                # random l33t
-                1T y0ur kl1k c4n, be r35u|7z n0n-3N9l1sh c@N, t3H 1T 1n70 250m p1cz!
-    
-                # random chinese
-                            ク饎 ゐ椩か 諯そ稪
-                
-            }
+              || <<'TEST'
+
+# text
+The quick brown fox jumps over the ......
+
+# random lorem
+Lorem ipsum dolor sit amet, esse modus mundi id usu, dicit ....
+
+# random l33t
+1T y0ur kl1k c4n, be r35u|7z n0n-3N9l1sh c@N, t3H 1T 1n70 250m p1cz!
+
+# random chinese
+富士は日本一の山
+
+TEST
+
         );
 
         my $msg_id = $client->send(@message);

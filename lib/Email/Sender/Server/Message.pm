@@ -1,6 +1,6 @@
 package Email::Sender::Server::Message;
 {
-    $Email::Sender::Server::Message::VERSION = '0.28';
+    $Email::Sender::Server::Message::VERSION = '0.30';
 }
 
 use strict;
@@ -23,7 +23,7 @@ set {
 
 };
 
-our $VERSION = '0.28';    # VERSION
+our $VERSION = '0.30';    # VERSION
 
 bld sub {
 
@@ -446,6 +446,11 @@ sub send {
       ) if $mail->{message}->{body_html};
 
     my $email = Email::MIME->create(
+        attributes => {
+            content_type => 'text/html',
+            charset      => 'utf-8',
+            encoding     => 'quoted-printable',
+        },
         header_str => [
             To      => $mail->{message}->{to},
             From    => $mail->{message}->{from},

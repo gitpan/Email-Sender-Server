@@ -30,12 +30,14 @@ my %WriteMakefileArgs = (
     "File::Basename" => 0,
     "File::Copy" => 0,
     "File::Path" => 0,
+    "File::Slurp" => 0,
     "File::Spec" => 0,
     "File::Type" => 0,
     "IO::All" => 0,
-    "Validation::Class" => "5.82"
+    "Validation::Class" => "5.82",
+    "utf8" => 0
   },
-  "VERSION" => "0.28",
+  "VERSION" => "0.30",
   "test" => {
     "TESTS" => "t/*.t"
   }
