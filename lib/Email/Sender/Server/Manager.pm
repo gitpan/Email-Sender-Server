@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.30';
+    $Email::Sender::Server::Manager::VERSION = '0.32';
 }
 
 use strict;
@@ -24,7 +24,7 @@ use Email::Sender::Server::Worker;
 
 $Data::Dumper::Useperl = 1;
 
-our $VERSION = '0.30';    # VERSION
+our $VERSION = '0.32';    # VERSION
 
 set {
 
@@ -240,7 +240,7 @@ sub process_workload {
 
                     my $data = do $filepath;
 
-                    if ($worker->process_message($data)) {
+                    if ($worker->process_message($data, {file => $filepath})) {
 
                         # move message to passed
 
@@ -366,7 +366,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.30
+version 0.32
 
 =head1 SYNOPSIS
 

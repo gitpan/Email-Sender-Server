@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Worker;
 {
-    $Email::Sender::Server::Worker::VERSION = '0.30';
+    $Email::Sender::Server::Worker::VERSION = '0.32';
 }
 
 use strict;
@@ -18,11 +18,13 @@ set {
 
 use Carp 'confess';
 use File::Path 'mkpath';
+use File::Slurp 'write_file';
 use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir';
 
 use Email::Sender::Server::Message;
+use Class::Date;
 
-our $VERSION = '0.30';    # VERSION
+our $VERSION = '0.32';    # VERSION
 
 
 has id => $$;
@@ -54,13 +56,51 @@ bld sub {
 
 sub process_message {
 
-    my ($self, $data) = @_;
+    my ($self, $data, $args) = @_;
 
     my $message = Email::Sender::Server::Message->new;
 
     if ($message->from_hash($data)) {
 
         $message->send;
+
+        {
+
+            # ridiculously simple stupid logging
+
+            my @audit = ();
+
+            push @audit, "Date: " . Class::Date::now->string;
+
+            push @audit, "To: " . $message->to;
+            push @audit, "From: " . $message->from;
+            push @audit, "Subject: " . $message->subject;
+
+            push @audit, "File: " . $args->{file};
+
+            push @audit, "Status: " . $message->status;
+
+            if ($message->status =~ /failure/i) {
+
+                push @audit,
+                  "Errors: "
+                  . $message->status eq 'Email::Sender::Failure::Multi'
+                  ? join "\n", map { $_->message } $message->response->failure
+                  : $message->response->message;
+
+            }
+
+            push @audit, "\n\n";
+
+            write_file $self->filepath('delivery.log'), {
+
+                binmode => ':utf8',
+                append  => 1
+
+              },
+              join "\n", @audit;
+
+        }
 
         if ($message->error_count) {
 
@@ -95,7 +135,7 @@ Email::Sender::Server::Worker - Email Server Worker
 
 =head1 VERSION
 
-version 0.30
+version 0.32
 
 =head1 SYNOPSIS
 

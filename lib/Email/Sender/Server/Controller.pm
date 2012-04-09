@@ -1,7 +1,7 @@
 
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.30';
+    $Email::Sender::Server::Controller::VERSION = '0.32';
 }
 
 use strict;
@@ -11,7 +11,7 @@ use Validation::Class;
 
 use utf8;
 
-our $VERSION = '0.30';    # VERSION
+our $VERSION = '0.32';    # VERSION
 
 has arguments => sub {
     [

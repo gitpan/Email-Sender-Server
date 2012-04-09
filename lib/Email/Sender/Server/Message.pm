@@ -1,6 +1,6 @@
 package Email::Sender::Server::Message;
 {
-    $Email::Sender::Server::Message::VERSION = '0.30';
+    $Email::Sender::Server::Message::VERSION = '0.32';
 }
 
 use strict;
@@ -23,7 +23,7 @@ set {
 
 };
 
-our $VERSION = '0.30';    # VERSION
+our $VERSION = '0.32';    # VERSION
 
 bld sub {
 
@@ -164,9 +164,15 @@ fld reply_to => {
 
 };
 
+has response => sub {
+
+    undef    # Email::Sender::Success or Email::Sender::Failure object
+
+};
+
 has status => sub {
 
-    undef    # Email::Sender::Success or Email::Sender::Failure
+    undef    # Email::Sender::Success or Email::Sender::Failure string
 
 };
 
@@ -497,7 +503,9 @@ sub send {
 
     confess $@ if $@;
 
-    $self->status(ref $status || $status);    # set Email::Sender:: $status
+    $self->status(ref $status || $status);    # set Email::Sender::$Status
+
+    $self->response($status);
 
     $self->set_errors('unknown error sending email')
       if $self->status =~ /failure/i;

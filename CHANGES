@@ -1,5 +1,8 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.32 (2012-04-08)
+    * added simple logging capabilities
+
 0.30 (2012-04-08)
     * utf-8 handling fixes
     * added File::Slurp
