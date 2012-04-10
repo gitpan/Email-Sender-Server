@@ -1,7 +1,7 @@
 
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.32';
+    $Email::Sender::Server::Controller::VERSION = '0.35';
 }
 
 use strict;
@@ -11,7 +11,7 @@ use Validation::Class;
 
 use utf8;
 
-our $VERSION = '0.32';    # VERSION
+our $VERSION = '0.35';    # VERSION
 
 has arguments => sub {
     [
@@ -504,7 +504,7 @@ sub _command_start_background {
     my $manager =
       Email::Sender::Server::Manager->new(spawn => $opts->{workers});
 
-    $manager->process_workload;
+    $manager->delegate_workload;
 
 }
 
@@ -620,15 +620,19 @@ sub _command_testmail {
     }
 
     my $i = $opts->{i} || 1;
+    my $x = 1;
 
     for (1 .. $i) {
+
+        # pause per 10 submissions in an attempt to not overwhelm the system
+        $x = 0 && sleep 5 if $i > $_ && $x == 10;
 
         my $client = Email::Sender::Server::Client->new;
 
         my @message = (
             to      => $opts->{to},
             from    => $opts->{from},
-            subject => $opts->{subject} || "ESS Test Msg: #" . $i,
+            subject => $opts->{subject} || "ESS Test Msg: #" . $_,
             text    => $opts->{text}
               || $opts->{html}
               || <<'TEST'

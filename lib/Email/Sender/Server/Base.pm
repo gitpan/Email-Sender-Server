@@ -1,6 +1,6 @@
 package Email::Sender::Server::Base;
 {
-    $Email::Sender::Server::Base::VERSION = '0.32';
+    $Email::Sender::Server::Base::VERSION = '0.35';
 }
 
 use strict;
@@ -14,7 +14,7 @@ use File::Path 'mkpath';
 use File::Spec::Functions 'rel2abs', 'catdir', 'catfile', 'curdir', 'splitdir',
   'splitpath';
 
-our $VERSION = '0.32';    # VERSION
+our $VERSION = '0.35';    # VERSION
 
 bld sub {
 

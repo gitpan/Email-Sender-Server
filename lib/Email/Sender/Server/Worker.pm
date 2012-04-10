@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Worker;
 {
-    $Email::Sender::Server::Worker::VERSION = '0.32';
+    $Email::Sender::Server::Worker::VERSION = '0.35';
 }
 
 use strict;
@@ -24,7 +24,7 @@ use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir';
 use Email::Sender::Server::Message;
 use Class::Date;
 
-our $VERSION = '0.32';    # VERSION
+our $VERSION = '0.35';    # VERSION
 
 
 has id => $$;
@@ -64,7 +64,7 @@ sub process_message {
 
         $message->send;
 
-        {
+        if ($args->{file}) {
 
             # ridiculously simple stupid logging
 
@@ -91,6 +91,11 @@ sub process_message {
             }
 
             push @audit, "\n\n";
+
+            # should we segmenting audit logs?
+            # my @directory = ('logs');
+            # push @directory, ($args->{file} =~ /\W?(\d{4})(\d{4})/);
+            # push @directory, ($args->{file} =~ /([\w\-]+)\.msg$/) . '.log';
 
             write_file $self->filepath('delivery.log'), {
 
@@ -135,7 +140,7 @@ Email::Sender::Server::Worker - Email Server Worker
 
 =head1 VERSION
 
-version 0.32
+version 0.35
 
 =head1 SYNOPSIS
 

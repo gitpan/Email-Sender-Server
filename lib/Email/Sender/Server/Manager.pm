@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.32';
+    $Email::Sender::Server::Manager::VERSION = '0.35';
 }
 
 use strict;
@@ -24,7 +24,7 @@ use Email::Sender::Server::Worker;
 
 $Data::Dumper::Useperl = 1;
 
-our $VERSION = '0.32';    # VERSION
+our $VERSION = '0.35';    # VERSION
 
 set {
 
@@ -198,10 +198,19 @@ sub create_work {
 
         my $filepath = $self->filepath('queued', $filename);
 
-        write_file $filepath, {binmode => ':utf8'},
-          join "\n\n", 'use utf8;' . Dumper $message;
+        my $pid = fork();
 
-        return $filepath;
+        if ($pid == 0) {
+
+            # we need more speed
+            write_file $filepath, {binmode => ':utf8'},
+              join "\n\n", 'use utf8;' . Dumper $message;
+
+            exit;    # zombies will self-destruct
+
+        }
+
+        return $filepath if $pid;
 
     }
 
@@ -216,7 +225,7 @@ sub create_work {
 }
 
 
-sub process_workload {
+sub delegate_workload {
 
     my $self = shift;
 
@@ -251,7 +260,7 @@ sub process_workload {
 
                         my @directory = ('passed');
 
-                        push @directory, ($filename =~ /(\d{4})(\d{4})/);
+                        push @directory, ($filename =~ /\W?(\d{4})(\d{4})/);
 
                         push @directory, $filename;
 
@@ -270,7 +279,7 @@ sub process_workload {
 
                         my @directory = ('failed');
 
-                        push @directory, ($filename =~ /(\d{4})(\d{4})/);
+                        push @directory, ($filename =~ /\W?(\d{4})(\d{4})/);
 
                         push @directory, $filename;
 
@@ -366,7 +375,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.32
+version 0.35
 
 =head1 SYNOPSIS
 
@@ -516,16 +525,16 @@ the queued email message unless message validation failed.
         
     }
 
-=head2 process_workload
+=head2 delegate_workload
 
-The process_workload method creates a number of worker processes based on the
+The delegate_workload method creates a number of worker processes based on the
 spawn attribute, forks itself and blocks until shutdown.
 
     use Email::Sender::Server::Manager;
     
     my $mgr = Email::Sender::Server::Manager->new;
     
-    $mgr->process_workload;
+    $mgr->delegate_workload; # blocking
 
 =head1 AUTHOR
 
