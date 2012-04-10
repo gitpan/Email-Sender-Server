@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.39';
+    $Email::Sender::Server::Manager::VERSION = '0.40';
 }
 
 use strict;
@@ -24,7 +24,7 @@ use Email::Sender::Server::Worker;
 
 $Data::Dumper::Useperl = 1;
 
-our $VERSION = '0.39';    # VERSION
+our $VERSION = '0.40';    # VERSION
 
 set {
 
@@ -303,9 +303,9 @@ sub delegate_workload {
 
                         push @audit, "Date: " . Class::Date::now->string;
 
-                        push @audit, "To: " . $data->{message}->{to};
-                        push @audit, "From: " . $data->{message}->{from};
-                        push @audit, "Subject: " . $data->{message}->{subject};
+                        push @audit, "To: " . $message->to;
+                        push @audit, "From: " . $message->from;
+                        push @audit, "Subject: " . $message->subject;
 
                         push @audit, "File: " . $next_filepath;
 
@@ -313,12 +313,22 @@ sub delegate_workload {
 
                         if ($message->status =~ /failure/i) {
 
-                            push @audit,
-                              "Errors: " . $message->status
-                              =~ /Failure::Multi$/
-                              ? join "\n",
-                              map { $_->message } $message->response->failure
-                              : $message->response->message;
+                            if ($message->status =~ /multi/i) {
+
+                                push @audit, "Errors: " . join ", ", map {
+
+                                    $_->message
+
+                                } $message->response->failure;
+
+                            }
+
+                            else {
+
+                                push @audit,
+                                  "Errors: " . $message->response->message;
+
+                            }
 
                         }
 
@@ -422,7 +432,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.39
+version 0.40
 
 =head1 SYNOPSIS
 

@@ -1,5 +1,8 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.40 (2012-04-10)
+    * fixed error logging failures
+
 0.39 (2012-04-10)
     * various workflow changes
     * moved auditing from Worker.pm to Manager.pm
