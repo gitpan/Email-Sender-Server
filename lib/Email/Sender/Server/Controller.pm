@@ -1,7 +1,7 @@
 
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.35';
+    $Email::Sender::Server::Controller::VERSION = '0.36';
 }
 
 use strict;
@@ -11,7 +11,7 @@ use Validation::Class;
 
 use utf8;
 
-our $VERSION = '0.35';    # VERSION
+our $VERSION = '0.36';    # VERSION
 
 has arguments => sub {
     [
@@ -370,7 +370,7 @@ sub _command_email {
 
     # capture message body from stdin
 
-    if ($opts->{text} xor $opts->{html}) {
+    if ($opts->{text} == 1 xor $opts->{html} == 1) {
 
         my @content = (<STDIN>);
 
@@ -597,7 +597,7 @@ sub _command_testmail {
 
     require "Email/Sender/Server/Client.pm";
 
-    if ($opts->{text} xor $opts->{html}) {
+    if ($opts->{text} == 1 xor $opts->{html} == 1) {
 
         my @content = (<STDIN>);
 

@@ -1,9 +1,12 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.36 (2012-04-10)
+    * fixed logic error in Controller.pm _command_testmail and _command_email
+
 0.35 (2012-04-10)
     * forking most hard-disk writes to gain speed
     * renamed Manager.pm process_workload to delegate_workload
-    * fixed typo in Controllers.pm _command_testmail
+    * fixed typo in Controller.pm _command_testmail
     * Worker.pm only process_message only logs activity if the filename is passed
 
 0.32 (2012-04-08)
