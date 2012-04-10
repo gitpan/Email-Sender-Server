@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.36';
+    $Email::Sender::Server::Manager::VERSION = '0.39';
 }
 
 use strict;
@@ -24,7 +24,7 @@ use Email::Sender::Server::Worker;
 
 $Data::Dumper::Useperl = 1;
 
-our $VERSION = '0.36';    # VERSION
+our $VERSION = '0.39';    # VERSION
 
 set {
 
@@ -249,7 +249,11 @@ sub delegate_workload {
 
                     my $data = do $filepath;
 
-                    if ($worker->process_message($data, {file => $filepath})) {
+                    my $next_filepath;
+
+                    my ($result, $message) = $worker->process_message($data);
+
+                    if ($result) {
 
                         # move message to passed
 
@@ -264,7 +268,8 @@ sub delegate_workload {
 
                         push @directory, $filename;
 
-                        move $filepath, $self->filepath(@directory);
+                        move $filepath,
+                          $next_filepath = $self->filepath(@directory);
 
                     }
 
@@ -283,7 +288,49 @@ sub delegate_workload {
 
                         push @directory, $filename;
 
-                        move $filepath, $self->filepath(@directory);
+                        move $filepath,
+                          $next_filepath = $self->filepath(@directory);
+
+                    }
+
+                    # log outcome (real quick)
+
+                    if ($next_filepath) {
+
+                        # ridiculously simple stupid logging
+
+                        my @audit = ();
+
+                        push @audit, "Date: " . Class::Date::now->string;
+
+                        push @audit, "To: " . $data->{message}->{to};
+                        push @audit, "From: " . $data->{message}->{from};
+                        push @audit, "Subject: " . $data->{message}->{subject};
+
+                        push @audit, "File: " . $next_filepath;
+
+                        push @audit, "Status: " . $message->status;
+
+                        if ($message->status =~ /failure/i) {
+
+                            push @audit,
+                              "Errors: " . $message->status
+                              =~ /Failure::Multi$/
+                              ? join "\n",
+                              map { $_->message } $message->response->failure
+                              : $message->response->message;
+
+                        }
+
+                        push @audit, "\n";
+
+                        write_file $self->filepath('delivery.log'), {
+
+                            binmode => ':utf8',
+                            append  => 1
+
+                          },
+                          join "\n", @audit;
 
                     }
 
@@ -375,7 +422,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.36
+version 0.39
 
 =head1 SYNOPSIS
 

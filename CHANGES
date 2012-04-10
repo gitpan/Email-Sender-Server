@@ -1,5 +1,10 @@
 This file documents the revision history for the Perl library Email::Sender::Server.
 
+0.39 (2012-04-10)
+    * various workflow changes
+    * moved auditing from Worker.pm to Manager.pm
+    * fixed comparison issue in Controller.pm _command_testmail and _command_email
+
 0.36 (2012-04-10)
     * fixed logic error in Controller.pm _command_testmail and _command_email
 

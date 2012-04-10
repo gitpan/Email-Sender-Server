@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Worker;
 {
-    $Email::Sender::Server::Worker::VERSION = '0.36';
+    $Email::Sender::Server::Worker::VERSION = '0.39';
 }
 
 use strict;
@@ -24,7 +24,7 @@ use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir';
 use Email::Sender::Server::Message;
 use Class::Date;
 
-our $VERSION = '0.36';    # VERSION
+our $VERSION = '0.39';    # VERSION
 
 
 has id => $$;
@@ -56,7 +56,7 @@ bld sub {
 
 sub process_message {
 
-    my ($self, $data, $args) = @_;
+    my ($self, $data) = @_;
 
     my $message = Email::Sender::Server::Message->new;
 
@@ -64,66 +64,13 @@ sub process_message {
 
         $message->send;
 
-        if ($args->{file}) {
-
-            # ridiculously simple stupid logging
-
-            my @audit = ();
-
-            push @audit, "Date: " . Class::Date::now->string;
-
-            push @audit, "To: " . $message->to;
-            push @audit, "From: " . $message->from;
-            push @audit, "Subject: " . $message->subject;
-
-            push @audit, "File: " . $args->{file};
-
-            push @audit, "Status: " . $message->status;
-
-            if ($message->status =~ /failure/i) {
-
-                push @audit,
-                  "Errors: "
-                  . $message->status eq 'Email::Sender::Failure::Multi'
-                  ? join "\n", map { $_->message } $message->response->failure
-                  : $message->response->message;
-
-            }
-
-            push @audit, "\n\n";
-
-            # should we segmenting audit logs?
-            # my @directory = ('logs');
-            # push @directory, ($args->{file} =~ /\W?(\d{4})(\d{4})/);
-            # push @directory, ($args->{file} =~ /([\w\-]+)\.msg$/) . '.log';
-
-            write_file $self->filepath('delivery.log'), {
-
-                binmode => ':utf8',
-                append  => 1
-
-              },
-              join "\n", @audit;
-
-        }
-
-        if ($message->error_count) {
-
-            $self->set_errors($message->get_errors);
-
-            return 0;
-
-        }
-
-        return 1;
+        return ($message->error_count ? 0 : 1, $message);
 
     }
 
     else {
 
-        $self->set_errors($message->get_errors);
-
-        return 0;
+        return (0, $message);
 
     }
 
@@ -140,7 +87,7 @@ Email::Sender::Server::Worker - Email Server Worker
 
 =head1 VERSION
 
-version 0.36
+version 0.39
 
 =head1 SYNOPSIS
 
@@ -150,7 +97,7 @@ version 0.36
     
     my $worker = Email::Sender::Server::Worker->new;
     
-    $worker->process_messages;
+    my ($ok, $message) = $worker->process_message;
 
 =head1 DESCRIPTION
 

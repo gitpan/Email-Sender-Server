@@ -1,7 +1,7 @@
 
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.36';
+    $Email::Sender::Server::Controller::VERSION = '0.39';
 }
 
 use strict;
@@ -11,7 +11,7 @@ use Validation::Class;
 
 use utf8;
 
-our $VERSION = '0.36';    # VERSION
+our $VERSION = '0.39';    # VERSION
 
 has arguments => sub {
     [
@@ -370,7 +370,10 @@ sub _command_email {
 
     # capture message body from stdin
 
-    if ($opts->{text} == 1 xor $opts->{html} == 1) {
+    $opts->{text} ||= '';
+    $opts->{html} ||= '';
+
+    if ($opts->{text} eq '1' xor $opts->{html} eq '1') {
 
         my @content = (<STDIN>);
 
@@ -597,7 +600,10 @@ sub _command_testmail {
 
     require "Email/Sender/Server/Client.pm";
 
-    if ($opts->{text} == 1 xor $opts->{html} == 1) {
+    $opts->{text} ||= '';
+    $opts->{html} ||= '';
+
+    if ($opts->{text} eq '1' xor $opts->{html} eq '1') {
 
         my @content = (<STDIN>);
 
@@ -619,23 +625,7 @@ sub _command_testmail {
 
     }
 
-    my $i = $opts->{i} || 1;
-    my $x = 1;
-
-    for (1 .. $i) {
-
-        # pause per 10 submissions in an attempt to not overwhelm the system
-        $x = 0 && sleep 5 if $i > $_ && $x == 10;
-
-        my $client = Email::Sender::Server::Client->new;
-
-        my @message = (
-            to      => $opts->{to},
-            from    => $opts->{from},
-            subject => $opts->{subject} || "ESS Test Msg: #" . $_,
-            text    => $opts->{text}
-              || $opts->{html}
-              || <<'TEST'
+    $opts->{text} = <<'TEST' unless $opts->{text} || $opts->{html};
 
 # text
 The quick brown fox jumps over the ......
@@ -651,7 +641,25 @@ Lorem ipsum dolor sit amet, esse modus mundi id usu, dicit ....
 
 TEST
 
+    my $i = $opts->{i} || 1;
+    my $x = 1;
+
+    for (1 .. $i) {
+
+        # pause per 10 submissions in an attempt to not overwhelm the system
+        $x = 0 && sleep 5 if $i > $_ && $x == 10;
+
+        my $client = Email::Sender::Server::Client->new;
+
+        my @message = (
+            to      => $opts->{to},
+            from    => $opts->{from},
+            subject => $opts->{subject} || "ESS Test Msg: #" . $_,
         );
+
+        push @message, (text => $opts->{text}) if $opts->{text};
+
+        push @message, (html => $opts->{html}) if $opts->{html};
 
         my $msg_id = $client->send(@message);
 
