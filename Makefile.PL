@@ -23,8 +23,9 @@ my %WriteMakefileArgs = (
   "NAME" => "Email::Sender::Server",
   "PREREQ_PM" => {
     "Class::Date" => 0,
+    "Command::Do" => 0,
     "Data::Dumper" => 0,
-    "Data::Validate::Email" => "0.04",
+    "Data::Validate::Email" => 0,
     "Email::MIME" => 0,
     "Email::Sender" => 0,
     "File::Basename" => 0,
@@ -34,10 +35,10 @@ my %WriteMakefileArgs = (
     "File::Spec" => 0,
     "File::Type" => 0,
     "IO::All" => 0,
-    "Validation::Class" => "5.82",
+    "Validation::Class" => 0,
     "utf8" => 0
   },
-  "VERSION" => "0.40",
+  "VERSION" => "0.50",
   "test" => {
     "TESTS" => "t/*.t"
   }

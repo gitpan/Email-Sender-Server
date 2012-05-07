@@ -1,0 +1,10 @@
+use utf8;$VAR1 = {
+          'transport' => {
+                           'Sendmail' => {
+                                           'sendmail' => '/usr/sbin/sendmail'
+                                         }
+                         },
+          'message' => {
+                         'from' => ''
+                       }
+        };

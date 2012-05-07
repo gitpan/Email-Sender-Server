@@ -1,6 +1,6 @@
 package Email::Sender::Server::Directives;
 {
-    $Email::Sender::Server::Directives::VERSION = '0.40';
+    $Email::Sender::Server::Directives::VERSION = '0.50';
 }
 
 use strict;
@@ -10,7 +10,7 @@ use Validation::Class;
 
 use Data::Validate::Email;
 
-our $VERSION = '0.40';    # VERSION
+our $VERSION = '0.50';    # VERSION
 
 dir 'is_email' => sub {
 
@@ -31,7 +31,7 @@ dir 'is_email' => sub {
               ? "$handle must have valid email addresses"
               : "$handle must be a valid email address";
 
-            $self->error($field, $error);
+            $field->{errors}->add($error);
 
             return 0;
 

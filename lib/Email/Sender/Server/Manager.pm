@@ -2,7 +2,7 @@
 
 package Email::Sender::Server::Manager;
 {
-    $Email::Sender::Server::Manager::VERSION = '0.40';
+    $Email::Sender::Server::Manager::VERSION = '0.50';
 }
 
 use strict;
@@ -24,7 +24,7 @@ use Email::Sender::Server::Worker;
 
 $Data::Dumper::Useperl = 1;
 
-our $VERSION = '0.40';    # VERSION
+our $VERSION = '0.50';    # VERSION
 
 set {
 
@@ -165,7 +165,7 @@ sub create_work {
 
     while (my ($name, $value) = each(%input)) {
 
-        $messenger->$name($value);
+        $messenger->$name($value) if $messenger->can($name);
 
     }
 
@@ -432,7 +432,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 0.40
+version 0.50
 
 =head1 SYNOPSIS
 

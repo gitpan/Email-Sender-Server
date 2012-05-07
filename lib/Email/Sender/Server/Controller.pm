@@ -1,24 +1,38 @@
-
 package Email::Sender::Server::Controller;
 {
-    $Email::Sender::Server::Controller::VERSION = '0.40';
+    $Email::Sender::Server::Controller::VERSION = '0.50';
 }
 
 use strict;
 use warnings;
 
-use Validation::Class;
+use Command::Do;
+set {classes => [__PACKAGE__]};
+
+Getopt::Long::Configure(qw(pass_through));    # pass args to children
 
 use utf8;
 
-our $VERSION = '0.40';    # VERSION
+our $VERSION = '0.50';                        # VERSION
 
-has arguments => sub {
-    [
+fld command => {
 
-        # command-line arguments
+    error      => "please specify a valid command",
+    required   => 1,
+    max_length => 255,
+    min_length => 2,
+    filters    => ['trim', 'strip', sub { $_[0] =~ s/\W/\_/g; $_[0] }]
 
-    ];
+};
+
+bld sub {
+
+    my ($self) = @_;
+
+    $self->command(shift @ARGV);
+
+    return $self;
+
 };
 
 has commands => sub {
@@ -44,19 +58,6 @@ has commands => sub {
 
         },
 
-        clean => {
-
-            abstract => 'cleanup the file system',
-            routine  => \&_command_clean,
-            usage    => qq{
-            
-            command: clean
-            
-            args syntax is :x for boolean and x:y for key/value
-            
-        }
-
-        },
 
         config => {
 
@@ -203,29 +204,6 @@ has commands => sub {
     };
 };
 
-fld command => {
-
-    error      => "please use a valid command",
-    required   => 1,
-    max_length => 255,
-    validation => sub {
-
-        my ($self, $field, $params) = @_;
-
-        unless (defined $self->commands->{$field->{value}}) {
-
-            $self->error($field, $field->{error});
-
-            return 0;
-
-        }
-
-        return 1;
-
-      }
-
-};
-
 mth execute_command => {
 
     input => ['command'],
@@ -233,466 +211,107 @@ mth execute_command => {
 
         my ($self, @args) = @_;
 
-        my ($options, $sequence) = $self->parse_arguments;
-
         # execute the command
 
         my $command = $self->command;
+        my $class   = $self->class($command) unless $command eq 'help';
+        my $output  = '';
 
-        my @params = ($self, $options, $sequence);
+        if ($class) {
 
-        my $output = $self->commands->{$command}->{routine}->(@params);
+            $output = $class->run;
 
-        unless ($output) {
+            unless ($output || not $class->error_count) {
 
-            my @errors =
-              ("\nError while executing $0 command ($command):\n\n");
+                $output = "Error: " . $class->errors_to_string(", ");
 
-            $output = join "\n", @errors, $self->get_errors, "\n";
-
-        }
-
-        $output =~ s/^[ ]+//gm;
-        $output =~ s/^\n +/\n/gm;
-        $output =~ s/^\n{2,}/\n/gm;
-        $output =~ s/\n+$/\n/;
-
-        print $output, "\n";
-
-      }
-
-};
-
-sub parse_arguments {
-
-    my $self = shift;
-
-    my @args = @{$self->arguments};
-
-    my $params = {};
-
-    my $sequence = [];
-
-    for (my $i = 0; $i < @args; $i++) {
-
-        my $arg = $args[$i];
-
-        if ($arg =~ /^:(.*)/) {
-
-            $params->{$1} = 1;
-
-        }
-
-        elsif ($arg =~ /(.*):$/) {
-
-            $params->{$1} = $args[++$i];
-
-        }
-
-        elsif ($arg =~ /([^:]+):(.*)$/) {
-
-            $params->{$1} = $2;
+            }
 
         }
 
         else {
 
-            push @{$sequence}, $arg;
+            my $command = $self->command(shift @ARGV);
 
-        }
+            if ($self->validate('command') && $command ne 'help') {
 
-    }
+                # output help information
 
-    return $params, $sequence;
+                my $class = $self->class($command);
 
-}
+                return unless $class;
 
-sub _command_copy {
+                my $FILE = ref $class;
 
-    my ($self, $opts) = @_;
+                $FILE =~ s/::/\//g;
 
-    my $to = $opts->{to} ||= 'new_ess';
+                print "\n";
 
-    require "File/Copy.pm";
-    require "Email/Sender/Server/Manager.pm";
+                system "pod2usage", "-verbose", 1, $INC{"$FILE.pm"};
 
-    my $manager = Email::Sender::Server::Manager->new;
+                print "\n";
 
-    File::Copy::copy($0, $manager->filepath('..', $to));
-    File::Copy::move($manager->directory,
-        $manager->directory('..', "$to\_data"));
-
-    chmod 0755, $manager->filepath('..', $to);
-
-    rmdir $manager->directory;
-
-    exit print "ESS Executable Copied Successfully\n";
-
-}
-
-sub _command_clean {
-
-    my ($self, $opts) = @_;
-
-    system $0, "stop";
-
-    require "Email/Sender/Server/Manager.pm";
-
-    my $manager = Email::Sender::Server::Manager->new;
-
-    $manager->cleanup;
-
-    exit print "ESS Cleanup, Repair and Recovery Completed\n";
-
-}
-
-sub _command_config {
-
-    my ($self, $opts) = @_;
-
-    require "Email/Sender/Server/Manager.pm";
-
-    my $manager = Email::Sender::Server::Manager->new;
-
-    $manager->create_config;
-
-    exit print "ESS Config File Generated To Override Defaults\n";
-
-}
-
-sub _command_email {
-
-    my ($self, $opts) = @_;
-
-    require "Email/Sender/Server/Client.pm";
-
-    my $client = Email::Sender::Server::Client->new;
-
-    # capture message body from stdin
-
-    $opts->{text} ||= '';
-    $opts->{html} ||= '';
-
-    if ($opts->{text} eq '1' xor $opts->{html} eq '1') {
-
-        my @content = (<STDIN>);
-
-        if (@content) {
-
-            if ($opts->{text}) {
-
-                $opts->{text} = join "", @content;
+                exit;
 
             }
 
-            if ($opts->{html}) {
+            else {
 
-                $opts->{html} = join "", @content;
+                my $commands_string = "";
 
-            }
+                my ($ruler) = sort { length($b) <=> length($a) }
+                  keys %{
+                    ;
+                      $self->proto->relatives
+                  };
 
-        }
+                $ruler = length $ruler;
 
-    }
+                foreach my $class (
+                    sort keys %{
+                        ;
+                          $self->proto->relatives
+                    }
+                  )
+                {
 
-    my $id = $client->send(%{$opts});
+                    my $command = $self->class($class);
 
-    if ($client->error_count) {
+                    $commands_string
+                      .= "\t$class"
+                      . (" " x (($ruler - length($class)) + 5))
+                      . $command->abstract . "\n";
 
-        $self->set_errors($client->get_errors);
+                }
 
-        return;
-
-    }
-
-    exit print "Submitted Email for Processing (msg: $id)\n";
-
-}
-
-sub _command_help {
-
-    my ($self, $opts, $args) = @_;
-
-    my $commands_string;
-
-    if ($args->[0]) {
-
-        my $command = $args->[0];
-
-        if ($self->commands->{$command}) {
-
-            $commands_string = $self->commands->{$command}->{usage}
-              if $self->commands->{$command}->{usage};
-
-        }
-
-    }
-
-    unless ($commands_string) {
-
-        my @commands = keys %{$self->commands};
-
-        my @ordered = sort { $a cmp $b } @commands;
-
-        my ($max_chars) = length(
-            (
-
-                sort   { length($b) <=> length($a) }
-                  grep { not defined $self->commands->{$_}->{hidden} }
-                  @commands
-
-            )[0]
-        );
-
-        foreach my $name (@ordered) {
-
-            if (defined $self->commands->{$name}->{hidden}) {
-
-                next;
+                $output = qq{
+                    
+                    Usage: ess [command] [args]
+                    
+                    The command(s) info is as follows:
+                       
+                        $commands_string
+                    
+                    See 'ess help COMMAND' for more information on a specific command.
+                    
+                };
 
             }
+        }
 
-            my $desc = $self->commands->{$name}->{abstract}
-              || 'This Command has no Description';
+        if ($output) {
 
-            $commands_string
-              .= "\t$name"
-              . (" " x ($max_chars - length($name)))
-              . "\t $desc\n";
+            $output =~ s/^[ ]+//gm;
+            $output =~ s/^\n +/\n/gm;
+            $output =~ s/^\n{2,}/\n/gm;
+            $output =~ s/\n+$/\n/;
+
+            print $output, "\n";
 
         }
 
-    }
+      }
 
-    return qq{
-        
-        usage: $0 COMMAND [ARGS]
-        
-        The command(s) info is as follows:
-           
-            $commands_string
-        
-        See '$0 help COMMAND' for more information on a specific command.
-        
-    }
-
-}
-
-sub _command_start {
-
-    my ($self, $opts) = @_;
-
-    my $pid = fork;
-
-    $opts->{workers} = delete $opts->{w} if $opts->{w};
-
-    $opts->{workers} ||= 3;
-
-    exec $0, "start_background", "w:$opts->{workers}" unless $pid;
-
-    exit print "Starting ESS Background Process (pid: $$)\n";
-
-}
-
-sub _command_start_background {
-
-    my ($self, $opts) = @_;
-
-    require "Email/Sender/Server/Manager.pm";
-
-    $opts->{workers} = delete $opts->{w} if $opts->{w};
-
-    $opts->{workers} ||= 3;
-
-    my $manager =
-      Email::Sender::Server::Manager->new(spawn => $opts->{workers});
-
-    $manager->delegate_workload;
-
-}
-
-sub _command_status {
-
-    my ($self, $opts) = @_;
-
-    require "Email/Sender/Server/Manager.pm";
-
-    my $manager = Email::Sender::Server::Manager->new;
-
-    my $queued_count = @{$manager->message_filelist} || 0;
-
-    print "ESS Qeueue has $queued_count Message(s)\n";
-
-    sub count_files_in_directory {
-
-        my ($directory) = @_;
-
-        my @files = (glob "$directory/*.msg");
-
-        my $count = scalar @files;
-
-        my @sub_directories = grep {
-
-            -d $_ && $_ !~ /\.+$/
-
-        } glob "$directory/*";
-
-        for my $directory (@sub_directories) {
-
-            $count += count_files_in_directory($directory);
-
-        }
-
-        return $count;
-
-    }
-
-    opendir my $workspace_hdl, $manager->directory('worker');
-
-    my @workers = grep { !/^\./ } readdir $workspace_hdl;
-
-    if (@workers) {
-
-        print "ESS Currently Employs " . @workers . " Worker(s)\n\n";
-
-        foreach my $worker (@workers) {
-
-            my $count = @{$manager->message_filelist('worker', $worker)} || 0;
-
-            print "\tESS Worker $worker is Processing $count Message(s)\n";
-
-        }
-
-        print "\n";
-
-    }
-
-    my $passed_count = count_files_in_directory($manager->directory('passed'));
-
-    my $failed_count = count_files_in_directory($manager->directory('failed'));
-
-    print "ESS has successfully processed $passed_count Message(s)\n";
-    print "ESS has failed to process $failed_count Message(s)\n";
-
-    exit;
-
-}
-
-sub _command_stop {
-
-    my ($self, $opts) = @_;
-
-    require "Email/Sender/Server/Manager.pm";
-
-    my $manager = Email::Sender::Server::Manager->new;
-
-    my $flag_file = $manager->filepath('shutdown');
-
-    open my $fh, ">", $flag_file;
-
-    exit print "ESS Processing Shutdown Sequence Initiated\n";
-
-}
-
-sub _command_testmail {
-
-    my ($self, $opts) = @_;
-
-    require "Email/Sender/Server/Client.pm";
-
-    $opts->{text} ||= '';
-    $opts->{html} ||= '';
-
-    if ($opts->{text} eq '1' xor $opts->{html} eq '1') {
-
-        my @content = (<STDIN>);
-
-        if (@content) {
-
-            if ($opts->{text}) {
-
-                $opts->{text} = join "", @content;
-
-            }
-
-            if ($opts->{html}) {
-
-                $opts->{html} = join "", @content;
-
-            }
-
-        }
-
-    }
-
-    $opts->{text} = <<'TEST' unless $opts->{text} || $opts->{html};
-
-# text
-The quick brown fox jumps over the ......
-
-# random lorem
-Lorem ipsum dolor sit amet, esse modus mundi id usu, dicit ....
-
-# random l33t
-1T y0ur kl1k c4n, be r35u|7z n0n-3N9l1sh c@N, t3H 1T 1n70 250m p1cz!
-
-# random chinese
-富士は日本一の山
-
-TEST
-
-    my $i = $opts->{i} || 1;
-    my $x = 1;
-
-    for (1 .. $i) {
-
-        # pause per 10 submissions in an attempt to not overwhelm the system
-        $x = 0 && sleep 5 if $i > $_ && $x == 10;
-
-        my $client = Email::Sender::Server::Client->new;
-
-        my @message = (
-            to      => $opts->{to},
-            from    => $opts->{from},
-            subject => $opts->{subject} || "ESS Test Msg: #" . $_,
-        );
-
-        push @message, (text => $opts->{text}) if $opts->{text};
-
-        push @message, (html => $opts->{html}) if $opts->{html};
-
-        my $msg_id = $client->send(@message);
-
-        $msg_id
-          ? print "Processed email to: $message[1] - $msg_id\n"
-          : print "Failed processing email: "
-          . $client->errors_to_string . "\n";
-
-    }
-
-    exit print "ESS has processed $i test messages (hope everything is OK)\n";
-
-}
-
-sub _command_version {
-
-    my ($self, $opts) = @_;
-
-    require "Email/Sender/Server/Manager.pm";
-
-    my $version = do {
-
-        my $name    = "Email-Sender-Server (ESS)";
-        my $version = '0.00';
-
-        eval { $version = $Email::Sender::Server::Manager::VERSION };
-
-        join " ", $name, $version || '0.00'
-
-    };
-
-    exit print "$version\n";
-
-}
+};
 
 1;

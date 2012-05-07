@@ -2,40 +2,31 @@
 
 package Email::Sender::Server;
 {
-    $Email::Sender::Server::VERSION = '0.40';
+    $Email::Sender::Server::VERSION = '0.50';
 }
 
 use strict;
 use warnings;
 
-use Validation::Class;
+use Command::Do;
 
 use Email::Sender::Server::Controller;
 
-our $VERSION = '0.40';    # VERSION
+our $VERSION = '0.50';    # VERSION
 
 
 sub run {
 
-    my $self      = shift;
-    my @arguments = @ARGV;
+    my $self = shift;
 
-    @arguments = @_ unless @arguments;
-
-    my $command = shift @arguments;
-
-    $command ||= 'help';
-
-    my $controller = Email::Sender::Server::Controller->new(
-        command   => $command,
-        arguments => [@arguments]
-    );
+    my $controller = Email::Sender::Server::Controller->new;
 
     $controller->execute_command;
 
 }
 
 1;
+
 __END__
 
 =pod
@@ -46,7 +37,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 =head1 VERSION
 
-version 0.40
+version 0.50
 
 =head1 SYNOPSIS
 
@@ -108,7 +99,7 @@ used at the command-line.
     
     my $server = Email::Sender::Server->new;
     
-    $server->run('start', 'w:1'); # start the server with 1 worker
+    $server->run('start', '-w', 1); # start the server with 1 worker
 
 =head1 AUTHOR
 

@@ -4,7 +4,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 # VERSION
 
-version 0.40
+version 0.50
 
 # SYNOPSIS
 
@@ -75,7 +75,7 @@ used at the command-line.
     my $server = Email::Sender::Server->new;
     
 
-    $server->run('start', 'w:1'); # start the server with 1 worker
+    $server->run('start', '-w', 1); # start the server with 1 worker
 
 # AUTHOR
 
