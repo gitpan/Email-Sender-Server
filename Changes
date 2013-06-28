@@ -1,0 +1,179 @@
+==================================================
+Changes from 2012-06-28 00:00:00 +0000 to present.
+==================================================
+
+---------------------------------------------
+version 1.000000 at 2013-06-28 06:55:13 +0000
+---------------------------------------------
+
+  Change: 7053b22a5073c81ebe77c80779d6c4bf63f38627
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2013-06-28 02:54:30 +0000
+
+    releasing the new and improved Email-Sender-Server v1.000000 
+
+  Change: 90a2555ccf02c4b9dd5e8920bd7d2f05f883193d
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-04-10 18:03:45 +0000
+
+    * fixed error logging failures 
+
+  Change: 6a92a2cd2c09cddf27988d0ae72c2f2fb11e0049
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-04-10 17:33:39 +0000
+
+    * various workflow changes * moved auditing from Worker.pm to Manager.pm *
+    fixed comparison issue in Controller.pm _command_testmail and
+    _command_email 
+
+  Change: 9cdfa15e84da6a984b3a84f1fc9e2db5de4829e8
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-04-10 16:23:22 +0000
+
+    * fixed logic error in Controller.pm _command_testmail and _command_email 
+
+  Change: b239880715d9e2f190fafa355d768f148bc9161e
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-04-10 09:54:26 +0000
+
+    * forking most hard-disk writes to gain speed * renamed Manager.pm
+    process_workload to delegate_workload * fixed typo in Controllers.pm
+    _command_testmail * Worker.pm only process_message only logs activity if
+    the filename is passed 
+
+  Change: 4ac79e6a62f256881bc067ebbb07f7592617b77c
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-04-08 22:32:08 +0000
+
+    * added simple logging capabilities 
+
+  Change: 402784ca3bb5ec5fc7f6016b189a2f5ccac8e767
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-04-08 19:01:59 +0000
+
+    * utf-8 handling fixes * added File::Slurp 
+
+  Change: 16a8e560e89ce7cf8b6b0f785722eeadfc9d9901
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-04-08 14:01:09 +0000
+
+    * new version 
+
+  Change: 783031f046eb77cc437a8e4c3bee482414f2a687
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-04-08 13:51:25 +0000
+
+    * utf-8 handling of message file * segment successful messages in the
+    passed folder (avoid folder size limitations) * turned of write-buffer for
+    writing mail messages * added testmail command to send quick test emails 
+
+  Change: 555d6e82f05df358a14b31202b2435eb740ac006
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-26 19:47:14 +0000
+
+    * added the version command * updated the copy command * changed name of
+    the config file 
+
+  Change: 9326dae0f0aa7e145edcda072383e28fa8de4644
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-26 05:17:00 +0000
+
+    * change the generated data directory name * added copy command to the CLI 
+
+  Change: 4f14e17750ffe41244fc1d71dd1451f4d6eda8f6
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-25 03:17:55 +0000
+
+    * minor miscellaneous changes (e.g. config file lives along-side the exe) 
+
+  Change: 3377a17ab6d9eae31faa134eb6a91c37596d44e3
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-24 23:30:40 +0000
+
+    * miscellaneous POD changes 
+
+  Change: 7a40cd5de9600ed241465372853eefa40f0c0c22
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-24 22:26:37 +0000
+
+    * miscellaneous POD changes 
+
+  Change: 0ec306c39770265e7c40742cc83d630971fee788
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-22 19:21:36 +0000
+
+    * added usage info for CLI commands * added status command to the CLI *
+    fixed slight issue in Manager.pm * few POD changes 
+
+  Change: cc7b31618cd528c96a17d5371584c9e2111b6d12
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-22 02:52:03 +0000
+
+    * added config, email and clean commands to the CLI * add ability to
+    override message parameter defaults * fixed and updated POD * removed
+    silly constraints from the message body attributes 
+
+  Change: 509ec64f3c967a1ff79c914da776a6c1a3f25f6c
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-21 13:41:37 +0000
+
+    * fixed big bug in Message.pm from_hash method setting the message body 
+
+  Change: 05c6927f1f7f100d3a3a59a7cdc39cbc8accb123
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-21 01:59:56 +0000
+
+    * fixed big bug in Message.pm to_hash method handling the body * updated
+    POD 
+
+  Change: 5ae91fb28839b70f168e3e29541d200f13021a80
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-21 01:03:43 +0000
+
+    * fixed big typo in Message.pm from_hash method 
+
+  Change: 30e6988fd29f4e771cc77c46a1631ee964dab7a3
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-21 00:13:17 +0000
+
+    * first official release (no POD, no tests) 
+
+  Change: e3affe796421d47673508656b009c4d4b570b57a
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-20 23:49:28 +0000
+
+    trim the fat (no moose, no dbic, etc) 
+
+  Change: 894052366ec74a9f51e8616c51b38494246a68fb
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-14 23:05:12 +0000
+
+    POD changes 
+
+  Change: ecb086418b06b81cfd19d5b058ad0038cadada16
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-14 08:46:11 +0000
+
+    commence brain dump 
+
+  Change: 77da1f4185d2b188c64a1341f0dc0b72d5d58d1c
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-08 04:44:03 +0000
+
+    updated pod 
+
+  Change: c88b4375e5eeaab7fb1815471889be1185098dbf
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-08 04:43:11 +0000
+
+    updated pod 
+
+  Change: 512c1efdf8504578da7386fa2bc607aeb9b2eb7a
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2012-03-08 04:38:29 +0000
+
+    initial commit 
+
+================
+End of releases.
+================

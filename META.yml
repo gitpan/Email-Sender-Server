@@ -1,12 +1,12 @@
 ---
 abstract: 'Eventual Email Delivery System'
 author:
-  - 'Al Newkirk <awncorp@cpan.org>'
+  - 'Al Newkirk <anewkirk@ana.io>'
 build_requires: {}
 configure_requires:
   ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300010, CPAN::Meta::Converter version 2.120630'
+generated_by: 'Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.130880'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -14,22 +14,18 @@ meta-spec:
 name: Email-Sender-Server
 requires:
   Class::Date: 0
-  Command::Do: 0
   Data::Dumper: 0
-  Data::Validate::Email: 0
-  Email::MIME: 0
-  Email::Sender: 0
+  Emailesque: 0
   File::Basename: 0
   File::Copy: 0
   File::Path: 0
   File::Slurp: 0
   File::Spec: 0
-  File::Type: 0
-  IO::All: 0
-  Validation::Class: 0
+  Hash::Merge: 0
+  Moo: 0
   utf8: 0
 resources:
-  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Email-Sender-Server
-  homepage: http://ana.io/
-  repository: http://github.com/alnewkirk/Email-Sender-Server.git
-version: 0.50
+  bugtracker: https://github.com/alnewkirk/Email-Sender-Server/issues
+  homepage: https://github.com/alnewkirk/Email-Sender-Server
+  repository: git://github.com/alnewkirk/Email-Sender-Server.git
+version: 1.000000

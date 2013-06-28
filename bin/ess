@@ -5,24 +5,16 @@
 
 use strict;
 use warnings;
-
-use File::Spec;
-use File::Basename 'dirname';
-
-use lib join '/', File::Spec->splitdir(dirname(__FILE__)), 'lib';
-use lib join '/', File::Spec->splitdir(dirname(__FILE__)), '..', 'lib';
-
-use Email::Sender::Server; 
+use Email::Sender::Server;
 
 our $VERSION = $Email::Sender::Server::VERSION || '0.0.0';
 
 # $ENV{ESS_DATA} = '/path_to/data_directory/parent/folder';
 
-$ARGV[0] ||= 'help';
-
-Email::Sender::Server->run; # spit it out mickey-fickey
+Email::Sender::Server::run; # justdoit
 
 __END__
+
 =pod
 
 =head1 NAME
@@ -31,18 +23,17 @@ ess cli - Email Sender Server CLI
 
 =head1 VERSION
 
-version 0.50
+version 1.000000
 
 =head1 AUTHOR
 
-Al Newkirk <awncorp@cpan.org>
+Al Newkirk <anewkirk@ana.io>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by awncorp.
+This software is copyright (c) 2010 by Al Newkirk.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
