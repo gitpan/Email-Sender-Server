@@ -26,6 +26,6 @@ requires:
   utf8: 0
 resources:
   bugtracker: https://github.com/alnewkirk/Email-Sender-Server/issues
-  homepage: https://github.com/alnewkirk/Email-Sender-Server
+  homepage: http://search.cpan.org/dist/Email-Sender-Server/
   repository: git://github.com/alnewkirk/Email-Sender-Server.git
-version: 1.000000
+version: 1.000001

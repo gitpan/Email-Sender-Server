@@ -20,7 +20,7 @@ use Email::Sender::Server::Worker;
 
 $Data::Dumper::Useperl = 1;
 
-our $VERSION = '1.000000'; # VERSION
+our $VERSION = '1.000001'; # VERSION
 
 
 
@@ -324,7 +324,7 @@ Email::Sender::Server::Manager - Email Server Manager
 
 =head1 VERSION
 
-version 1.000000
+version 1.000001
 
 =head1 SYNOPSIS
 

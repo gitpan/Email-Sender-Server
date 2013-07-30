@@ -4,7 +4,7 @@ package Email::Sender::Server;
 
 use Email::Sender::Server::Controller;
 
-our $VERSION = '1.000000'; # VERSION
+our $VERSION = '1.000001'; # VERSION
 
 
 
@@ -31,7 +31,7 @@ Email::Sender::Server - Eventual Email Delivery System
 
 =head1 VERSION
 
-version 1.000000
+version 1.000001
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ then ...
 
     # eventual emailer
     my $mailer  = Email::Sender::Server::Client->new;
-    $mailer->send(to => '...', subject => '...', body => '...');
+    my $receipt = $mailer->email(to => '...', subject => '...', body => '...');
 
 maybe ...
 
@@ -90,7 +90,7 @@ used by a command-line interface.
     use Email::Sender::Server;
 
     # start the server with 1 worker
-    Email::Sender::Server->run('start', 'worker:1');
+    Email::Sender::Server::run('start', 'worker:1');
 
 =head1 AUTHOR
 

@@ -9,8 +9,9 @@ with 'Email::Sender::Server::Base';
 
 use Class::Date;
 use Emailesque;
+use Hash::Merge qw(merge);
 
-our $VERSION = '1.000000'; # VERSION
+our $VERSION = '1.000001'; # VERSION
 
 
 my @attributes = qw(
@@ -27,6 +28,7 @@ my @attributes = qw(
     tags
     transport
     result
+    config
 );
 
 has \@attributes => (
@@ -68,6 +70,9 @@ sub BUILD {
         my $data = do $config;
 
         return $self unless "HASH" eq ref $data ;
+
+        $self->config($data)
+            if $data && ! $self->config;
 
         $self->to($data->{message}->{to})
             if $data->{message}->{to} && ! $self->to;
@@ -155,12 +160,17 @@ sub to_hash {
 sub send {
     my ($self) = @_;
     my $mail = $self->to_hash or return;
+    my $conf = $self->config  || { message => {} };
 
-    my $email = Emailesque->new({
+    $mail = {
         %{$mail->{message}},
           $mail->{headers}     ? (headers     => $mail->{headers})     : (),
           $mail->{attachments} ? (attachments => $mail->{attachments}) : ()
-    });
+    };
+
+    $mail = merge $mail, $conf->{message} if keys %$conf;
+
+    my $email = Emailesque->new($mail);
 
     my $result = $email->send(
         {} => $mail->{transport} ? %{$mail->{transport}} : ()
@@ -183,7 +193,7 @@ Email::Sender::Server::Message - Eventual Email Message Object
 
 =head1 VERSION
 
-version 1.000000
+version 1.000001
 
 =head1 SYNOPSIS
 

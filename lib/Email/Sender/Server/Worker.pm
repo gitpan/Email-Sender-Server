@@ -15,7 +15,7 @@ use File::Spec::Functions 'curdir', 'catdir', 'catfile', 'splitdir';
 use Email::Sender::Server::Message;
 use Class::Date;
 
-our $VERSION = '1.000000'; # VERSION
+our $VERSION = '1.000001'; # VERSION
 
 
 has id => (
@@ -66,7 +66,7 @@ Email::Sender::Server::Worker - Email Server Worker
 
 =head1 VERSION
 
-version 1.000000
+version 1.000001
 
 =head1 SYNOPSIS
 

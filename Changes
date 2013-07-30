@@ -1,10 +1,38 @@
 ==================================================
-Changes from 2012-06-28 00:00:00 +0000 to present.
+Changes from 2012-07-30 00:00:00 +0000 to present.
 ==================================================
 
 ---------------------------------------------
-version 1.000000 at 2013-06-28 06:55:13 +0000
+version 1.000001 at 2013-07-30 02:32:52 +0000
 ---------------------------------------------
+
+  Change: e9efdf7f1a6ba4ad74a8678b5447096f67c835e2
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2013-07-29 22:32:47 +0000
+
+    fixed bug where ess message send method ignored configuration variables 
+
+  Change: 75dd9638dd051103836071ec218008f86fdff617
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2013-06-28 03:10:44 +0000
+
+    minor update to documentation 
+
+  Change: ce71df3bc1b461479f857e9193e0e7f1deac401b
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2013-06-28 03:04:50 +0000
+
+    minor update to documentation 
+
+---------------------------------------------
+version 1.000000 at 2013-06-28 06:55:21 +0000
+---------------------------------------------
+
+  Change: 8c8db9889395ef7162ec3527fa445633d6afdc33
+  Author: Al Newkirk <anewkirk@ana.io>
+  Date : 2013-06-28 02:55:21 +0000
+
+    v1.000000 
 
   Change: 7053b22a5073c81ebe77c80779d6c4bf63f38627
   Author: Al Newkirk <anewkirk@ana.io>

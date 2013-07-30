@@ -8,7 +8,7 @@ use Moo;
 use utf8;
 use Exporter 'import';
 
-our $VERSION = '1.000000'; # VERSION
+our $VERSION = '1.000001'; # VERSION
 
 our @EXPORT_OK = qw(email);
 
@@ -39,7 +39,7 @@ Email::Sender::Server::Client - Email Delivery Agent
 
 =head1 VERSION
 
-version 1.000000
+version 1.000001
 
 =head1 SYNOPSIS
 
@@ -47,22 +47,22 @@ version 1.000000
 
     use Email::Sender::Server::Client 'email';
 
-    my $msgfile = email { to => '...', subject => '...', body => '...' };
+    my $receipt = email { to => '...', subject => '...', body => '...' };
 
-    # ... check on the status of $msgfile
+    # ... check on the status of $receipt
 
-    print "file has been queued" if -f $msgfile;
-    print "file has been processed" if -f $msgfile;
+    print "file has been queued"    if -f $receipt;
+    print "file has been processed" if ! -f $receipt;
 
 or using an object-oriented approach ....
 
     use Email::Sender::Server::Client;
 
     my $client = Email::Sender::Server::Client->new;
-    my $msgfile = $client->email({to => '...', subject => '...', body => '...'});
+    my $receipt = $client->email({to => '...', subject => '...', body => '...'});
 
-    print "file has been queued" if -f $msgfile;
-    print "file has been processed" if -f $msgfile;
+    print "file has been queued"    if -f $receipt;
+    print "file has been processed" if ! -f $receipt;
 
 Please see the L<Email::Sender::Server::Message> class for attributes that can
 be used as arguments to the mail() and send() methods.

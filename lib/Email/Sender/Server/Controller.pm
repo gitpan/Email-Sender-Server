@@ -7,7 +7,7 @@ use Email::Sender::Server::Client;
 use Email::Sender::Server::Manager;
 use File::Copy;
 
-our $VERSION = '1.000000'; # VERSION
+our $VERSION = '1.000001'; # VERSION
 
 has arguments => (
     is      => 'rw',

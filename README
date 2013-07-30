@@ -2,7 +2,7 @@ NAME
     Email::Sender::Server - Eventual Email Delivery System
 
 VERSION
-    version 1.000000
+    version 1.000001
 
 SYNOPSIS
         $ ess help start
@@ -17,7 +17,7 @@ SYNOPSIS
 
         # eventual emailer
         my $mailer  = Email::Sender::Server::Client->new;
-        $mailer->send(to => '...', subject => '...', body => '...');
+        my $receipt = $mailer->email(to => '...', subject => '...', body => '...');
 
     maybe ...
 
@@ -58,7 +58,7 @@ METHODS
         use Email::Sender::Server;
 
         # start the server with 1 worker
-        Email::Sender::Server->run('start', 'worker:1');
+        Email::Sender::Server::run('start', 'worker:1');
 
 AUTHOR
     Al Newkirk <anewkirk@ana.io>

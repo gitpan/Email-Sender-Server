@@ -6,7 +6,7 @@ use File::Path 'mkpath';
 use File::Spec::Functions 'rel2abs', 'catdir', 'catfile', 'curdir',
   'splitdir', 'splitpath';
 
-our $VERSION = '1.000000'; # VERSION
+our $VERSION = '1.000001'; # VERSION
 
 sub BUILD {
     my ($self) = @_;
